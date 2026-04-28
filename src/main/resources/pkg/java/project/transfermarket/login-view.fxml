@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="pkg.java.project.transfermarket.UI.LoginController"
+            style="-fx-background-color: #f0f0f0;">
+
+    <top>
+        <VBox style="-fx-background-color: #1e3a8a; -fx-padding: 20;">
+            <Label text="⚽ Transfer Market" style="-fx-text-fill: white; -fx-font-size: 32; -fx-font-weight: bold;"/>
+            <Label text="Player Trading Platform" style="-fx-text-fill: #93c5fd; -fx-font-size: 14;"/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox alignment="CENTER" spacing="30.0" style="-fx-padding: 40;">
+            <HBox spacing="20" alignment="CENTER">
+                <Button text="Admin Login" style="-fx-font-size: 14; -fx-padding: 10; -fx-min-width: 150;"
+                        onAction="#onAdminLoginClick" styleClass="btn-primary"/>
+                <Button text="Manager Login" style="-fx-font-size: 14; -fx-padding: 10; -fx-min-width: 150;"
+                        onAction="#onManagerLoginClick" styleClass="btn-primary"/>
+                <Button text="Owner Login" style="-fx-font-size: 14; -fx-padding: 10; -fx-min-width: 150;"
+                        onAction="#onOwnerLoginClick" styleClass="btn-primary"/>
+            </HBox>
+
+            <Separator/>
+
+            <VBox fx:id="loginPanel" alignment="CENTER" spacing="15" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-padding: 30; -fx-min-width: 400; -fx-style: '-fx-background-color: white;'">
+                <Label fx:id="loginTitle" text="Login" style="-fx-font-size: 24; -fx-font-weight: bold;"/>
+
+                <Label text="Username:" style="-fx-font-size: 12;"/>
+                <TextField fx:id="usernameField" promptText="Enter username"/>
+
+                <Label text="Password:" style="-fx-font-size: 12;"/>
+                <PasswordField fx:id="passwordField" promptText="Enter password"/>
+
+                <Label fx:id="messageLabel" text="" style="-fx-text-fill: red; -fx-font-size: 12;"/>
+
+                <HBox spacing="10" alignment="CENTER">
+                    <Button text="Login" style="-fx-font-size: 12; -fx-padding: 8; -fx-min-width: 100;"
+                            onAction="#onLoginClick" styleClass="btn-success"/>
+                    <Button text="Clear" style="-fx-font-size: 12; -fx-padding: 8; -fx-min-width: 100;"
+                            onAction="#onClearClick" styleClass="btn-secondary"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </center>
+
+    <bottom>
+        <VBox style="-fx-background-color: #e5e7eb; -fx-padding: 15; -fx-alignment: center;">
+            <Label text="Transfer Market © 2026 - All Rights Reserved" style="-fx-text-alignment: center; -fx-font-size: 11;"/>
+        </VBox>
+    </bottom>
+</BorderPane>
+

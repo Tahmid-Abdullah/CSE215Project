@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="pkg.java.project.transfermarket.UI.AdminController"
+            style="-fx-background-color: #f0f0f0;">
+
+    <top>
+        <VBox style="-fx-background-color: #1e3a8a; -fx-padding: 15;">
+            <Label text="Admin Dashboard" style="-fx-text-fill: white; -fx-font-size: 28; -fx-font-weight: bold;"/>
+        </VBox>
+    </top>
+
+    <left>
+        <VBox style="-fx-background-color: #f3f4f6; -fx-border-color: #d1d5db; -fx-min-width: 200;" spacing="10" style="-fx-padding: 15;">
+            <Label text="Menu" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+            <Separator/>
+            <Button text="1. Update Credentials" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onUpdateCredentials"/>
+            <Button text="2. View Managers" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onViewManagers"/>
+            <Button text="3. View Teams" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onViewTeams"/>
+            <Button text="4. View Players" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onViewPlayers"/>
+            <Button text="5. Add Player" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onAddPlayer"/>
+            <Button text="6. Remove Player" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onRemovePlayer"/>
+            <Button text="7. Add Manager" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onAddManager"/>
+            <Button text="8. Remove Manager" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onRemoveManager"/>
+            <Button text="9. Add Team" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onAddTeam"/>
+            <Button text="10. Remove Team" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onRemoveTeam"/>
+            <Button text="11. Add Owner" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onAddOwner"/>
+            <Button text="12. Remove Owner" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onRemoveOwner"/>
+            <Separator/>
+            <Button text="Logout" style="-fx-min-width: 180;" onAction="#onLogout" styleClass="btn-danger"/>
+        </VBox>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <VBox fx:id="contentArea" spacing="15" style="-fx-padding: 20;">
+                <Label text="Select an option from the menu" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+                <TextArea fx:id="outputArea" wrapText="true" style="-fx-control-inner-background: white; -fx-font-size: 11;" prefHeight="400"/>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <VBox style="-fx-background-color: #e5e7eb; -fx-padding: 10;">
+            <Label text="Admin Panel" style="-fx-text-alignment: center; -fx-font-size: 11;"/>
+        </VBox>
+    </bottom>
+</BorderPane>
+
