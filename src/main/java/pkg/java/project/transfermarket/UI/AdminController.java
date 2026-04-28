@@ -11,6 +11,7 @@ import java.io.IOException;
 
 public class AdminController {
     @FXML private TextArea outputArea;
+    @FXML private VBox contentArea;
     
     @FXML
     protected void onUpdateCredentials() {

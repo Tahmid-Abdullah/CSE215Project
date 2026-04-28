@@ -11,6 +11,7 @@ import java.io.IOException;
 public class OwnerController {
     @FXML private Label ownerTitle;
     @FXML private TextArea outputArea;
+    @FXML private VBox contentArea;
     
     private String ownerName;
     
@@ -118,7 +119,7 @@ public class OwnerController {
             team.setManager(null);
             m.setIsAvailable(true);
             pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("manager.txt", Lists.getManagerList());
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("team.txt", Lists.getTeamList());
+            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("teams.txt", Lists.getTeamList());
             outputArea.appendText("Manager removed successfully.\n");
         } catch (IOException e) {
             outputArea.appendText("Error: " + e.getMessage() + "\n");
@@ -178,7 +179,7 @@ public class OwnerController {
             selectedPlayer.setIsAvailable(false);
             selectedPlayer.setTeamId(team.getId());
             
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("team.txt", Lists.getTeamList());
+            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("teams.txt", Lists.getTeamList());
             pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("players.txt", Lists.getPlayerList());
             
             outputArea.appendText("Player bought successfully!\n");
@@ -232,7 +233,7 @@ public class OwnerController {
             selectedPlayer.setTeamId(0);
             
             pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("players.txt", Lists.getPlayerList());
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("team.txt", Lists.getTeamList());
+            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("teams.txt", Lists.getTeamList());
             
             outputArea.appendText("Player sold successfully! Budget: $" + team.getBudget() + "\n");
             

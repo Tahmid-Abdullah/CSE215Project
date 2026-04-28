@@ -12,6 +12,7 @@ import java.io.IOException;
 public class ManagerController {
     @FXML private Label managerTitle;
     @FXML private TextArea outputArea;
+    @FXML private VBox contentArea;
     
     private String managerName;
     
@@ -173,7 +174,7 @@ public class ManagerController {
             selectedPlayer.setIsAvailable(false);
             selectedPlayer.setTeamId(myTeam.getId());
             
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("team.txt", Lists.getTeamList());
+            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("teams.txt", Lists.getTeamList());
             pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("players.txt", Lists.getPlayerList());
             
             outputArea.appendText("Player bought successfully!\n");
@@ -243,7 +244,7 @@ public class ManagerController {
             selectedPlayer.setTeamId(0);
             
             pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("players.txt", Lists.getPlayerList());
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("team.txt", Lists.getTeamList());
+            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("teams.txt", Lists.getTeamList());
             
             outputArea.appendText("Player sold successfully! Budget: $" + myTeam.getBudget() + "\n");
             
