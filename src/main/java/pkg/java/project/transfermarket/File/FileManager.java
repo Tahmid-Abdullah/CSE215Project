@@ -56,6 +56,10 @@ public class FileManager {
 
     // Writing in a file method:
     public static void writeToFile(String filename,String data) throws IOException {
+        java.nio.file.Path path = java.nio.file.Paths.get(filename);
+        if (path.getParent() != null) {
+            java.nio.file.Files.createDirectories(path.getParent());
+        }
         try(BufferedWriter bw= new BufferedWriter(new FileWriter(filename, true))) {
             bw.write(data);
             bw.newLine();
