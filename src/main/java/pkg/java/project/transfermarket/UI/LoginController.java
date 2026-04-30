@@ -54,8 +54,8 @@ public class LoginController {
     
     @FXML
     protected void onLoginClick() {
-        String username = usernameField.getText();
-        String password = passwordField.getText();
+        String username = usernameField.getText().trim();
+        String password = passwordField.getText().trim();
         
         if (username.isEmpty() || password.isEmpty()) {
             messageLabel.setText("Please fill in all fields");
