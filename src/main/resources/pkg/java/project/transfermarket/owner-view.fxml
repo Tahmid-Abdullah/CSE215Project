@@ -17,6 +17,9 @@
         <VBox style="-fx-background-color: #f3f4f6; -fx-border-color: #d1d5db; -fx-min-width: 200;" spacing="10" style="-fx-padding: 15;">
             <Label text="Owner Menu" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
             <Separator/>
+            <Button text="Update Credentials" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onUpdateCredentials"/>
+            <Separator/>
+            <Separator/>
             <Button text="1. View My Team" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onViewMyTeam"/>
             <Button text="2. Edit Team" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onEditTeam"/>
             <Separator/>
