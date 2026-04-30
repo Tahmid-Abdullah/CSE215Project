@@ -198,6 +198,7 @@ public class AdminLogin {
             Lists.addTeam(t);
             // Update manager file
             FileManager.overWriteObjectFile(managerfile,Lists.getManagerList());
+            System.out.println("manager.txt updated");
             System.out.println("Team added successfully with ID " + t.getId() + ".");
         } catch (IOException e) {
             System.out.println("Error adding team: " + e.getMessage());
