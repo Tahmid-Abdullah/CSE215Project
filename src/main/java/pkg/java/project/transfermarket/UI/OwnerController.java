@@ -83,6 +83,46 @@ public class OwnerController {
             outputArea.appendText("Error: " + e.getMessage() + "\n");
         }
     }
+
+    @FXML
+    protected void onUpdateCredentials() {
+        try {
+            TextInputDialog nameDialog = new TextInputDialog();
+            nameDialog.setTitle("Update Credentials");
+            nameDialog.setHeaderText("Enter new name:");
+            String newName = nameDialog.showAndWait().orElse(null);
+            if (newName == null || newName.isBlank()) return;
+
+            TextInputDialog passDialog = new TextInputDialog();
+            passDialog.setTitle("Update Credentials");
+            passDialog.setHeaderText("Enter new password:");
+            String newPass = passDialog.showAndWait().orElse(null);
+            if (newPass == null || newPass.isBlank()) return;
+
+            java.util.ArrayList<Owner> owners = Lists.getOwnerList();
+            Owner target = null;
+            for (Owner o : owners) {
+                if (o.getName().equals(ownerName)) {
+                    target = o;
+                    break;
+                }
+            }
+            if (target == null) {
+                outputArea.appendText("Owner not found.\n");
+                return;
+            }
+            target.setName(newName);
+            target.setPassword(newPass);
+            // Persist owners and teams (owner name appears in teams)
+            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("owner.txt", Lists.getOwnerList());
+            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("teams.txt", Lists.getTeamList());
+            this.ownerName = newName;
+            ownerTitle.setText("Owner Dashboard - " + newName);
+            outputArea.appendText("Credentials updated successfully.\n");
+        } catch (Exception e) {
+            outputArea.appendText("Error updating credentials: " + e.getMessage() + "\n");
+        }
+    }
     
     private void showEditMenu(Team team) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
