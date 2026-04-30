@@ -14,11 +14,11 @@ public class FileManager {
     public static void FileInitialization() throws IOException{
 
 
-            File player = new File(playerfile);
-            File team = new File(teamfile);
-            File admin = new File(adminFile);
-            File owner = new File(ownerfile);
-            File manager= new File(managerfile);
+            File player = new File(PLAYER_FILE);
+            File team = new File(TEAM_FILE);
+            File admin = new File(ADMIN_FILE);
+            File owner = new File(OWNER_FILE);
+            File manager= new File(MANAGER_FILE);
 
             if (player.createNewFile()) {
                 System.out.println("Player file created successfully.");
