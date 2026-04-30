@@ -3,6 +3,7 @@ package pkg.java.project.transfermarket.UI;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import pkg.java.project.transfermarket.File.FileManager;
+import pkg.java.project.transfermarket.File.Lists;
 
 import java.io.IOException;
 
