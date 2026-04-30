@@ -7,11 +7,11 @@ import java.util.*;
 
 public class Lists {
 
-    private static final String playerfile = "players.txt";
-    private static final String teamfile = "teams.txt";
-    private static final String adminFile = "admin.txt";
-    private static final String managerfile = "manager.txt";
-    private static final String ownerfile = "owner.txt";
+    private static final String playerfile = FileManager.PLAYER_FILE;
+    private static final String teamfile = FileManager.TEAM_FILE;
+    private static final String adminFile = FileManager.ADMIN_FILE;
+    private static final String managerfile = FileManager.MANAGER_FILE;
+    private static final String ownerfile = FileManager.OWNER_FILE;
 
     private static ArrayList<Player> playerList = new ArrayList<>();
     private static ArrayList<Manager> managerList = new ArrayList<>();
