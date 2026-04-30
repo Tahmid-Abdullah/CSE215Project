@@ -18,7 +18,7 @@ public class Admin extends Entity{
 
             File file = new File(FileManager.ADMIN_FILE);
             if (!file.exists() || file.length() == 0) {
-                FileManager.writeToFile("admin.txt", instance.toString());
+                FileManager.writeToFile(FileManager.ADMIN_FILE, instance.toString());
             }
         }
         return instance;
