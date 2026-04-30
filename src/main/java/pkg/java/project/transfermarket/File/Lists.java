@@ -157,6 +157,7 @@ public class Lists {
         }
         ownerList.remove(target);
         FileManager.overWriteObjectFile(ownerfile, ownerList);
+        System.out.println("owner.txt updated");
     }
 
     public static void syncAllFiles() throws IOException {
