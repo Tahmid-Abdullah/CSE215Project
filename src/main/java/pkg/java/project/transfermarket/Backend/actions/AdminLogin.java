@@ -11,11 +11,11 @@ import static pkg.java.project.transfermarket.Backend.actions.OwnerLogin.editTea
 
 public class AdminLogin {
     static Scanner in = new Scanner(System.in);
-    private static final String playerfile = "players.txt";
-    private static final String teamfile = "teams.txt";
-    private static final String adminFile = "admin.txt";
-    private static final String managerfile ="manager.txt";
-    private static final String ownerfile ="owner.txt";
+    private static final String playerfile = FileManager.PLAYER_FILE;
+    private static final String teamfile = FileManager.TEAM_FILE;
+    private static final String adminFile = FileManager.ADMIN_FILE;
+    private static final String managerfile = FileManager.MANAGER_FILE;
+    private static final String ownerfile = FileManager.OWNER_FILE;
 
     public AdminLogin(){
 
