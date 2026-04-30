@@ -16,7 +16,7 @@ public class Admin extends Entity{
         if(instance == null){
             instance = new Admin("admin","admin123"); // new admin creation
 
-            File file = new File("admin.txt");
+            File file = new File(FileManager.ADMIN_FILE);
             if (!file.exists() || file.length() == 0) {
                 FileManager.writeToFile("admin.txt", instance.toString());
             }
