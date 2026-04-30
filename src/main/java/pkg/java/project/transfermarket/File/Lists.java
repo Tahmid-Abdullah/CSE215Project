@@ -131,6 +131,7 @@ public class Lists {
         if (target.getCurrentSize() == 0 && target.getManager() == null) {
             teamList.remove(target);
             FileManager.overWriteObjectFile(teamfile, teamList);
+            System.out.println("teams.txt updated");
         } else {
             System.out.println("Team already has players/manager.");
         }
