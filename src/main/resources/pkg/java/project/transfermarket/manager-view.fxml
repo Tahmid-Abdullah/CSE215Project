@@ -14,7 +14,7 @@
     </top>
 
     <left>
-        <VBox style="-fx-background-color: #f3f4f6; -fx-border-color: #d1d5db; -fx-min-width: 200;" spacing="10" style="-fx-padding: 15;">
+        <VBox style="-fx-background-color: #f3f4f6; -fx-border-color: #d1d5db; -fx-min-width: 200; -fx-padding: 15;" spacing="10">
             <Label text="Manager Menu" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
             <Separator/>
             <Button text="1. Update Credentials" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onUpdateCredentials"/>
