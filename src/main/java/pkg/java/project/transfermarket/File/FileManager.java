@@ -5,11 +5,11 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class FileManager {
-    private static final String playerfile = "players.txt";
-    private static final String teamfile = "teams.txt";
-    private static final String adminFile = "admin.txt";
-    private static final String managerfile ="manager.txt";
-    private static final String ownerfile ="owner.txt";
+    public static final String PLAYER_FILE = "players.txt";
+    public static final String TEAM_FILE = "teams.txt";
+    public static final String ADMIN_FILE = "admin.txt";
+    public static final String MANAGER_FILE = "manager.txt";
+    public static final String OWNER_FILE = "owner.txt";
 
     public static void FileInitialization() throws IOException{
 
