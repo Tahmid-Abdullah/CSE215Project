@@ -110,6 +110,7 @@ public class Lists {
         if (target.getIsAvailable()) {
             managerList.remove(target);
             FileManager.overWriteObjectFile(managerfile, managerList);
+            System.out.println("manager.txt updated");
         } else {
             System.out.println("Manager is already booked.");
         }
