@@ -31,6 +31,9 @@ public class AdminController {
             Admin admin = Admin.getInstance();
             admin.setName(username);
             admin.setPassword(password);
+            // Persist admin credentials
+            pkg.java.project.transfermarket.File.FileManager.overwriteFile(pkg.java.project.transfermarket.File.FileManager.ADMIN_FILE, admin.toString());
+            System.out.println("admin.txt updated");
             outputArea.appendText("Admin credentials updated successfully!\n");
         } catch (Exception e) {
             outputArea.appendText("Error: " + e.getMessage() + "\n");
