@@ -58,7 +58,9 @@ public class ManagerController {
             
             targetManager.setName(newName);
             targetManager.setPassword(newPassword);
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("manager.txt", Lists.getManagerList());
+            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("manager.txt",Lists.getManagerList());
+            // also persist teams since manager names are referenced in teams
+            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("teams.txt", Lists.getTeamList());
             outputArea.appendText("Manager credentials updated successfully!\n");
             this.managerName = newName;
             managerTitle.setText("Manager Dashboard - " + newName);
