@@ -311,6 +311,7 @@ public class AdminLogin {
                         admin.setName(username);
                         admin.setPassword(password);
                         FileManager.overwriteFile(adminFile,admin.toString());
+                        System.out.println("admin.txt updated");
                         System.out.println("Admin credentials updated successfully!");
                     } catch (IOException e) {
                         System.out.println("Error updating admin credentials: " + e.getMessage());
