@@ -69,7 +69,14 @@ public class FileManager {
     // Reading from a file method:
     public static ArrayList<String> readFromFile(String filename) throws IOException {
         ArrayList<String> lines = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+        java.io.File f = new java.io.File(filename);
+        if (!f.exists()) {
+            // create the file and return empty list instead of throwing
+            f.getParentFile();
+            f.createNewFile();
+            return lines;
+        }
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
             String line;
             while ((line = br.readLine()) != null) {
                 lines.add(line);
