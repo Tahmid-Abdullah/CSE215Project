@@ -16,7 +16,7 @@ public class Main {
         try {
             FileManager.FileInitialization();
 
-            if(FileManager.readFromFile("admin.txt").isEmpty()) {
+            if(FileManager.readFromFile(FileManager.ADMIN_FILE).isEmpty()) {
                 Admin admin = Admin.getInstance();
                 System.out.println("Admin account created with default credentials: username='admin', password='admin123'");
             }
