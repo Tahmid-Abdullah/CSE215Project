@@ -87,7 +87,11 @@ public class FileManager {
 
     // Overwriting a file method:
     public static void overwriteFile(String filename, String data) throws IOException {
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter(filename, false))) {
+        java.io.File f = new java.io.File(filename);
+        if (!f.exists()) {
+            f.createNewFile();
+        }
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(f, false))) {
             bw.write(data);
             bw.newLine();
         }
