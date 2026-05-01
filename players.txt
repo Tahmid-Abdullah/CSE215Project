@@ -1,1 +1,2 @@
 1,Messi,38,RWF,500.0,0,0,true,0
+2,Ronaldo,40,CF,450.0,0,0,true,0

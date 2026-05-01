@@ -14,23 +14,25 @@
     </top>
 
     <left>
-        <VBox style="-fx-background-color: #f3f4f6; -fx-border-color: #d1d5db; -fx-min-width: 200; -fx-padding: 15;" spacing="10">
+        <VBox style="-fx-background-color: #f3f4f6; -fx-border-color: #d1d5db; -fx-min-width: 220; -fx-padding: 15;" spacing="8">
             <Label text="Menu" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
             <Separator/>
-            <Button text="1. Update Credentials" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onUpdateCredentials"/>
-            <Button text="2. View Managers" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onViewManagers"/>
-            <Button text="3. View Teams" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onViewTeams"/>
-            <Button text="4. View Players" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onViewPlayers"/>
-            <Button text="5. Add Player" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onAddPlayer"/>
-            <Button text="6. Remove Player" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onRemovePlayer"/>
-            <Button text="7. Add Manager" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onAddManager"/>
-            <Button text="8. Remove Manager" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onRemoveManager"/>
-            <Button text="9. Add Team" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onAddTeam"/>
-            <Button text="10. Remove Team" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onRemoveTeam"/>
-            <Button text="11. Add Owner" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onAddOwner"/>
-            <Button text="12. Remove Owner" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onRemoveOwner"/>
+            <Button text="1. Update Credentials" style="-fx-min-width: 200; -fx-text-alignment: left;" onAction="#onUpdateCredentials"/>
+            <Button text="2. View Managers" style="-fx-min-width: 200; -fx-text-alignment: left;" onAction="#onViewManagers"/>
+            <Button text="3. View Teams" style="-fx-min-width: 200; -fx-text-alignment: left;" onAction="#onViewTeams"/>
+            <Button text="4. View Players" style="-fx-min-width: 200; -fx-text-alignment: left;" onAction="#onViewPlayers"/>
+            <Button text="5. Add Player" style="-fx-min-width: 200; -fx-text-alignment: left;" onAction="#onAddPlayer"/>
+            <Button text="6. Remove Player" style="-fx-min-width: 200; -fx-text-alignment: left;" onAction="#onRemovePlayer"/>
+            <Button text="7. Add Manager" style="-fx-min-width: 200; -fx-text-alignment: left;" onAction="#onAddManager"/>
+            <Button text="8. Remove Manager" style="-fx-min-width: 200; -fx-text-alignment: left;" onAction="#onRemoveManager"/>
+            <Button text="9. Add Team" style="-fx-min-width: 200; -fx-text-alignment: left;" onAction="#onAddTeam"/>
+            <Button text="10. Remove Team" style="-fx-min-width: 200; -fx-text-alignment: left;" onAction="#onRemoveTeam"/>
+            <Button text="11. View Owners" style="-fx-min-width: 200; -fx-text-alignment: left;" onAction="#onViewOwners"/>
+            <Button text="12. Add Owner (with team)" style="-fx-min-width: 200; -fx-text-alignment: left;" onAction="#onAddOwner"/>
+            <Button text="13. Add Owner (no team)" style="-fx-min-width: 200; -fx-text-alignment: left;" onAction="#onAddOwnerWithoutTeam"/>
+            <Button text="14. Remove Owner" style="-fx-min-width: 200; -fx-text-alignment: left;" onAction="#onRemoveOwner"/>
             <Separator/>
-            <Button text="Logout" style="-fx-min-width: 180;" onAction="#onLogout" styleClass="btn-danger"/>
+            <Button text="15. Logout" style="-fx-min-width: 200;" onAction="#onLogout" styleClass="btn-danger"/>
         </VBox>
     </left>
 

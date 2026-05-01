@@ -1,1 +1,2 @@
-1,Mourinho,true,1234
+1,Mourinho,true,1234,0
+2,Konte,true,1234,0

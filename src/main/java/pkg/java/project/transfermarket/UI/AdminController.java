@@ -321,6 +321,25 @@ public class AdminController {
     
     @FXML
     protected void onRemoveTeam() {
+        // First show available teams
+        try {
+            outputArea.clear();
+            java.util.ArrayList<Team> teams = Lists.getTeamList();
+            if (teams.isEmpty()) {
+                outputArea.appendText("No teams available to remove.\n");
+                return;
+            }
+            outputArea.appendText("--- Teams ---\n");
+            for (Team t : teams) {
+                outputArea.appendText("ID: " + t.getId() + " | Name: " + t.getTeamName() + 
+                        " | Manager: " + (t.getManager() != null ? t.getManager().getName() : "None") + 
+                        " | Players: " + t.getCurrentSize() + "/11 | Owner: " + 
+                        (t.getOwner() != null ? t.getOwner().getName() : "None") + "\n");
+            }
+        } catch (Exception e) {
+            outputArea.appendText("Error loading teams: " + e.getMessage() + "\n");
+        }
+        
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Remove Team");
         dialog.setHeaderText("Enter team ID to remove:");
@@ -331,8 +350,37 @@ public class AdminController {
         
         try {
             int id = Integer.parseInt(idStr);
-            Lists.removeTeam(id);
+            java.util.ArrayList<Team> teams = Lists.getTeamList();
+            Team targetTeam = null;
+            for (Team t : teams) {
+                if (t.getId() == id) {
+                    targetTeam = t;
+                    break;
+                }
+            }
+            
+            if (targetTeam == null) {
+                outputArea.appendText("Team not available.\n");
+                return;
+            }
+            
+            if (targetTeam.getCurrentSize() > 0) {
+                outputArea.appendText("Cannot remove team. Team still has players (" + targetTeam.getCurrentSize() + "/11).\n");
+                return;
+            }
+            
+            if (targetTeam.getManager() != null) {
+                outputArea.appendText("Cannot remove team. Team still has a manager assigned.\n");
+                return;
+            }
+            
+            // Remove team and update files
+            teams.remove(targetTeam);
+            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.TEAM_FILE, Lists.getTeamList());
+            System.out.println("teams.txt updated");
             outputArea.appendText("Team removed successfully.\n");
+        } catch (NumberFormatException e) {
+            outputArea.appendText("Invalid team ID format.\n");
         } catch (IOException e) {
             outputArea.appendText("Error: " + e.getMessage() + "\n");
         }
