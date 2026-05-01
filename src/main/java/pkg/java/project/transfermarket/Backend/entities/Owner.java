@@ -41,6 +41,14 @@ public class Owner extends  Entity{
         this.ownersBudget = ownersBudget;
     }
 
+    public double getBudget() {
+        return ownersBudget;
+    }
+
+    public void setBudget(double budget) {
+        this.ownersBudget = budget;
+    }
+
     public Team getTeam() {
         return team;
     }

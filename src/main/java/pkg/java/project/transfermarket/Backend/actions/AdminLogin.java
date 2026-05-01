@@ -85,19 +85,28 @@ public class AdminLogin {
         }
     }
 
-    //case 4: view owners
+    //case 4: view owners with their teams
     public static void viewOwners() throws IOException {
-        ArrayList<String> dataLines= FileManager.readFromFile(ownerfile);
-        if (dataLines.isEmpty()) {
+        ArrayList<Owner> owners = Lists.getOwnerList();
+        if (owners.isEmpty()) {
             System.out.println("No owner data available.");
             return;
         }
-        for(String singleLine:dataLines){
-            String[] cred= singleLine.split(",");
-            if(cred.length >= 5){
-
-                System.out.println(
-                        "ID: " + cred[0] + " | Manager name: " + cred[1] + " | Budget: "+cred[2]+" | Team name: "+cred[4]);
+        for (Owner owner : owners) {
+            System.out.println("ID: " + owner.getId() + " | Name: " + owner.getName() + " | Budget: $" + owner.getBudget());
+            // Find teams owned by this owner
+            ArrayList<Team> teams = Lists.getTeamList();
+            boolean hasTeam = false;
+            for (Team t : teams) {
+                if (t.getOwner() != null && t.getOwner().getId() == owner.getId()) {
+                    System.out.println("   ├─ Team: " + t.getTeamName() + " (ID: " + t.getId() + ") | Manager: " + 
+                            (t.getManager() != null ? t.getManager().getName() : "None") + " | Budget: $" + t.getBudget() + 
+                            " | Players: " + t.getCurrentSize() + "/11");
+                    hasTeam = true;
+                }
+            }
+            if (!hasTeam) {
+                System.out.println("   └─ No team owned");
             }
         }
     }
@@ -220,7 +229,24 @@ public class AdminLogin {
         }
     }
 
-    //case 11:
+    //case 11: Add Owner without team
+    public static void addOwnerWithoutTeam() throws IOException {
+        try {
+            String name = Tools.readString(in, "Enter owner name: ");
+            String password = Tools.readString(in, "Enter owner password: ");
+            double budget = Tools.readDouble(in, "Enter owner budget: ");
+            
+            Owner o = new Owner(name, password, budget);
+            Lists.addOwner(o);
+            FileManager.overWriteObjectFile(ownerfile, Lists.getOwnerList());
+            System.out.println("owner.txt updated");
+            System.out.println("Owner added successfully with ID " + o.getId() + ".");
+        } catch (IOException e) {
+            System.out.println("Error adding owner: " + e.getMessage());
+        }
+    }
+
+    //case 12 (renamed, was 11):
     public static void addOwner() throws IOException {
         try {
             String name = Tools.readString(in, "Enter owner name: ");
@@ -253,26 +279,73 @@ public class AdminLogin {
             }
             Team t= new Team(Tname,selectedManager,Tbudget,price,new Owner(name,password,budget));
             selectedManager.setIsAvailable(false);
+            selectedManager.setTeamId(t.getId());
             Lists.addTeam(t);
             // Update manager file
             FileManager.overWriteObjectFile(managerfile,Lists.getManagerList());
             System.out.println("manager.txt updated");
             System.out.println("Team added successfully with ID " + t.getId() + ".");
             Lists.addOwner(t.getOwner());
+            FileManager.overWriteObjectFile(ownerfile, Lists.getOwnerList());
+            System.out.println("owner.txt updated");
             System.out.println("Owner added successfully with ID " + t.getOwner().getId() + ".");
 
         } catch (IOException e) {
             System.out.println("Error adding manager: " + e.getMessage());
         }
     }
-    //case 12:
+
+    //case 13 (renamed, was 12): remove owner
     public static void removeOwner() throws IOException {
         try {
             viewOwners();
             int id = Tools.readInt(in, "Enter Owner ID to remove: ");
-            Lists.removeOwner(id);
+            ArrayList<Owner> owners = Lists.getOwnerList();
+            Owner targetOwner = null;
+            for (Owner o : owners) {
+                if (o.getId() == id) {
+                    targetOwner = o;
+                    break;
+                }
+            }
+            if (targetOwner == null) {
+                System.out.println("Owner not found.");
+                return;
+            }
+            
+            // Find teams owned by this owner
+            ArrayList<Team> teams = Lists.getTeamList();
+            Team ownedTeam = null;
+            for (Team t : teams) {
+                if (t.getOwner() != null && t.getOwner().getId() == id) {
+                    ownedTeam = t;
+                    break;
+                }
+            }
+            
+            // If owner has a team, check constraints before removal
+            if (ownedTeam != null) {
+                if (ownedTeam.getCurrentSize() > 0) {
+                    System.out.println("Cannot remove owner. Team still has players (" + ownedTeam.getCurrentSize() + "/11).");
+                    return;
+                }
+                if (ownedTeam.getManager() != null) {
+                    System.out.println("Cannot remove owner. Team still has a manager assigned.");
+                    return;
+                }
+                // Set team owner to null instead of removing owner
+                ownedTeam.setOwner(null);
+                FileManager.overWriteObjectFile(teamfile, Lists.getTeamList());
+                System.out.println("teams.txt updated");
+            }
+            
+            // Remove owner
+            owners.remove(targetOwner);
+            FileManager.overWriteObjectFile(ownerfile, Lists.getOwnerList());
+            System.out.println("owner.txt updated");
+            System.out.println("Owner removed successfully.");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("Error removing owner: " + e.getMessage());
         }
     }
 
@@ -295,9 +368,11 @@ public class AdminLogin {
                     8.Remove Manager.
                     9.Add team.
                     10.Remove team.
-                    11.Add Owner.
-                    12.Remove Owner.
-                    13.Log out.
+                    11.View Owners.
+                    12.Add Owner (with team).
+                    13.Add Owner (without team).
+                    14.Remove Owner.
+                    15.Log out.
                     
                     """);
 
@@ -402,14 +477,32 @@ public class AdminLogin {
 
                 case 11:
                     try {
-                        System.out.println("Adding Owner...");
+                        System.out.println("Owners and their teams:");
+                        viewOwners();
+                    } catch (IOException e) {
+                        System.out.println("Error viewing owners: " + e.getMessage());
+                    }
+                    break;
+
+                case 12:
+                    try {
+                        System.out.println("Adding Owner with team...");
                         addOwner();
                     } catch (IOException e) {
                         System.out.println("Error adding owner: " + e.getMessage());
                     }
                     break;
 
-                case 12:
+                case 13:
+                    try {
+                        System.out.println("Adding Owner without team...");
+                        addOwnerWithoutTeam();
+                    } catch (IOException e) {
+                        System.out.println("Error adding owner: " + e.getMessage());
+                    }
+                    break;
+
+                case 14:
                     try {
                         System.out.println("Removing owner...");
                         removeOwner();
@@ -417,7 +510,7 @@ public class AdminLogin {
                         System.out.println("Error removing owner: " + e.getMessage());
                     }
                     break;
-                case 13:
+                case 15:
                     System.out.println("Logging out...");
                     bool = false;
                     break;

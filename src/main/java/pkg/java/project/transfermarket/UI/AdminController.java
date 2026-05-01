@@ -340,11 +340,126 @@ public class AdminController {
     
     @FXML
     protected void onAddOwner() {
-        outputArea.appendText("Owner creation is handled during team creation.\n");
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Add Owner");
+        dialog.setHeaderText("Enter owner and team details:");
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+
+        TextField teamNameField = new TextField();
+        ComboBox<String> managerChoice = new ComboBox<>();
+        TextField budgetField = new TextField();
+        TextField priceField = new TextField();
+        TextField ownerNameField = new TextField();
+        PasswordField ownerPasswordField = new PasswordField();
+        TextField ownerBudgetField = new TextField();
+
+        // Populate managers
+        try {
+            java.util.ArrayList<Manager> managers = Lists.getManagerList();
+            for (Manager m : managers) {
+                managerChoice.getItems().add(m.getId() + " - " + m.getName() + (m.getIsAvailable() ? " (Available)" : " (Booked)"));
+            }
+        } catch (Exception e) {
+            outputArea.appendText("Error loading managers: " + e.getMessage() + "\n");
+        }
+
+        grid.add(new Label("Team Name:"), 0, 0);
+        grid.add(teamNameField, 1, 0);
+        grid.add(new Label("Manager (choose ID - name):"), 0, 1);
+        grid.add(managerChoice, 1, 1);
+        grid.add(new Label("Team Budget:"), 0, 2);
+        grid.add(budgetField, 1, 2);
+        grid.add(new Label("Team Price:"), 0, 3);
+        grid.add(priceField, 1, 3);
+        grid.add(new Label("Owner Name:"), 0, 4);
+        grid.add(ownerNameField, 1, 4);
+        grid.add(new Label("Owner Password:"), 0, 5);
+        grid.add(ownerPasswordField, 1, 5);
+        grid.add(new Label("Owner Budget:"), 0, 6);
+        grid.add(ownerBudgetField, 1, 6);
+
+        dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == ButtonType.OK) {
+                try {
+                    String teamName = teamNameField.getText();
+                    String managerSelection = managerChoice.getValue();
+                    if (teamName == null || teamName.isBlank() || managerSelection == null) {
+                        outputArea.appendText("Please fill in team name and select a manager.\n");
+                        return null;
+                    }
+                    int managerId = Integer.parseInt(managerSelection.split(" - ")[0].trim());
+                    java.util.ArrayList<Manager> mlist = Lists.getManagerList();
+                    Manager selectedManager = null;
+                    for (Manager m : mlist) {
+                        if (m.getId() == managerId) {
+                            selectedManager = m;
+                            break;
+                        }
+                    }
+                    if (selectedManager == null) {
+                        outputArea.appendText("Manager not found.\n");
+                        return null;
+                    }
+                    if (!selectedManager.getIsAvailable()) {
+                        outputArea.appendText("Selected manager is already booked.\n");
+                        return null;
+                    }
+                    double tBudget = Double.parseDouble(budgetField.getText());
+                    double tPrice = Double.parseDouble(priceField.getText());
+                    String ownerName = ownerNameField.getText();
+                    String ownerPass = ownerPasswordField.getText();
+                    double ownerBudget = Double.parseDouble(ownerBudgetField.getText());
+
+                    // Create owner and team, update lists and files
+                    Owner o = new Owner(ownerName, ownerPass, ownerBudget);
+                    Lists.addOwner(o);
+                    Team t = new Team(teamName, selectedManager, tBudget, tPrice, o);
+                    selectedManager.setIsAvailable(false);
+                    selectedManager.setTeamId(t.getId());
+                    Lists.addTeam(t);
+                    // Persist changes
+                    pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.MANAGER_FILE, Lists.getManagerList());
+                    System.out.println("manager.txt updated");
+                    pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.TEAM_FILE, Lists.getTeamList());
+                    System.out.println("teams.txt updated");
+                    pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.OWNER_FILE, Lists.getOwnerList());
+                    System.out.println("owner.txt updated");
+
+                    outputArea.appendText("Owner and team added successfully with ID " + o.getId() + " and team ID " + t.getId() + ".\n");
+                } catch (Exception e) {
+                    outputArea.appendText("Error creating owner and team: " + e.getMessage() + "\n");
+                }
+            }
+            return null;
+        });
+
+        dialog.showAndWait();
     }
     
     @FXML
     protected void onRemoveOwner() {
+        // First show owners
+        try {
+            outputArea.clear();
+            java.util.ArrayList<Owner> owners = Lists.getOwnerList();
+            if (owners.isEmpty()) {
+                outputArea.appendText("No owners available.\n");
+                return;
+            }
+            outputArea.appendText("--- Owners ---\n");
+            for (Owner o : owners) {
+                outputArea.appendText("ID: " + o.getId() + " | Name: " + o.getName() + " | Budget: $" + o.getBudget() + "\n");
+            }
+        } catch (Exception e) {
+            outputArea.appendText("Error: " + e.getMessage() + "\n");
+        }
+        
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Remove Owner");
         dialog.setHeaderText("Enter owner ID to remove:");
@@ -355,7 +470,50 @@ public class AdminController {
         
         try {
             int id = Integer.parseInt(idStr);
-            Lists.removeOwner(id);
+            java.util.ArrayList<Owner> owners = Lists.getOwnerList();
+            Owner targetOwner = null;
+            for (Owner o : owners) {
+                if (o.getId() == id) {
+                    targetOwner = o;
+                    break;
+                }
+            }
+            if (targetOwner == null) {
+                outputArea.appendText("Owner not found.\n");
+                return;
+            }
+            
+            // Find teams owned by this owner
+            java.util.ArrayList<Team> teams = Lists.getTeamList();
+            Team ownedTeam = null;
+            for (Team t : teams) {
+                if (t.getOwner() != null && t.getOwner().getId() == id) {
+                    ownedTeam = t;
+                    break;
+                }
+            }
+            
+            // If owner has a team, check constraints before removal
+            if (ownedTeam != null) {
+                if (ownedTeam.getCurrentSize() > 0) {
+                    outputArea.appendText("Cannot remove owner. Team still has players (" + ownedTeam.getCurrentSize() + "/11).\n");
+                    return;
+                }
+                if (ownedTeam.getManager() != null) {
+                    outputArea.appendText("Cannot remove owner. Team still has a manager assigned.\n");
+                    return;
+                }
+                // Set team owner to null instead of removing owner
+                ownedTeam.setOwner(null);
+                pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.TEAM_FILE, Lists.getTeamList());
+                System.out.println("teams.txt updated");
+                outputArea.appendText("Team owner set to null.\n");
+            }
+            
+            // Remove owner
+            owners.remove(targetOwner);
+            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.OWNER_FILE, Lists.getOwnerList());
+            System.out.println("owner.txt updated");
             outputArea.appendText("Owner removed successfully.\n");
         } catch (IOException e) {
             outputArea.appendText("Error: " + e.getMessage() + "\n");
@@ -363,9 +521,90 @@ public class AdminController {
     }
     
     @FXML
+    protected void onViewOwners() {
+        try {
+            outputArea.clear();
+            java.util.ArrayList<Owner> owners = Lists.getOwnerList();
+            if (owners.isEmpty()) {
+                outputArea.appendText("No owners available.\n");
+                return;
+            }
+            java.util.ArrayList<Team> teams = Lists.getTeamList();
+            outputArea.appendText("--- Owners and Their Teams ---\n");
+            for (Owner owner : owners) {
+                outputArea.appendText("ID: " + owner.getId() + " | Name: " + owner.getName() + " | Budget: $" + owner.getBudget() + "\n");
+                boolean hasTeam = false;
+                for (Team t : teams) {
+                    if (t.getOwner() != null && t.getOwner().getId() == owner.getId()) {
+                        outputArea.appendText("   ├─ Team: " + t.getTeamName() + " (ID: " + t.getId() + ") | Manager: " + 
+                                (t.getManager() != null ? t.getManager().getName() : "None") + " | Budget: $" + t.getBudget() + 
+                                " | Players: " + t.getCurrentSize() + "/11\n");
+                        hasTeam = true;
+                    }
+                }
+                if (!hasTeam) {
+                    outputArea.appendText("   └─ No team owned\n");
+                }
+            }
+        } catch (Exception e) {
+            outputArea.appendText("Error: " + e.getMessage() + "\n");
+        }
+    }
+    
+    @FXML
+    protected void onAddOwnerWithoutTeam() {
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Add Owner");
+        dialog.setHeaderText("Enter owner details:");
+        
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        
+        TextField ownerNameField = new TextField();
+        PasswordField ownerPasswordField = new PasswordField();
+        TextField ownerBudgetField = new TextField();
+        
+        grid.add(new Label("Owner Name:"), 0, 0);
+        grid.add(ownerNameField, 1, 0);
+        grid.add(new Label("Owner Password:"), 0, 1);
+        grid.add(ownerPasswordField, 1, 1);
+        grid.add(new Label("Owner Budget:"), 0, 2);
+        grid.add(ownerBudgetField, 1, 2);
+        
+        dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == ButtonType.OK) {
+                try {
+                    String ownerName = ownerNameField.getText();
+                    String ownerPass = ownerPasswordField.getText();
+                    double ownerBudget = Double.parseDouble(ownerBudgetField.getText());
+                    
+                    if (ownerName == null || ownerName.isBlank() || ownerPass == null || ownerPass.isBlank()) {
+                        outputArea.appendText("Please fill in all owner details.\n");
+                        return null;
+                    }
+                    
+                    Owner o = new Owner(ownerName, ownerPass, ownerBudget);
+                    Lists.addOwner(o);
+                    pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.OWNER_FILE, Lists.getOwnerList());
+                    System.out.println("owner.txt updated");
+                    
+                    outputArea.appendText("Owner added successfully with ID " + o.getId() + ".\n");
+                } catch (Exception e) {
+                    outputArea.appendText("Error creating owner: " + e.getMessage() + "\n");
+                }
+            }
+            return null;
+        });
+        
+        dialog.showAndWait();
+    }
+    
+    @FXML
     protected void onLogout() throws IOException {
         SceneManager.getInstance().backToLogin();
     }
 }
-
-

@@ -10,11 +10,11 @@ import java.util.*;
 
 public class OwnerLogin {
 
-    private static final String playerfile = "players.txt";
-    private static final String teamfile = "teams.txt";
-    private static final String adminFile = "admin.txt";
-    private static final String managerfile ="manager.txt";
-    private static final String ownerfile ="owner.txt";
+    private static final String playerfile = FileManager.PLAYER_FILE;
+    private static final String teamfile = FileManager.TEAM_FILE;
+    private static final String adminFile = FileManager.ADMIN_FILE;
+    private static final String managerfile = FileManager.MANAGER_FILE;
+    private static final String ownerfile = FileManager.OWNER_FILE;
 
     static Scanner in = new Scanner(System.in);
 
@@ -55,6 +55,7 @@ public class OwnerLogin {
                 1. Remove Manager.
                 2. Buy player.
                 3. Sell player.
+                4. Assign Manager.
                 """);
         int c = Tools.readInt(in, "Enter choice:");
         switch (c){
@@ -66,12 +67,48 @@ public class OwnerLogin {
                 }
                 t.setManager(null);
                 m.setIsAvailable(true);
+                m.setTeamId(0);
                 FileManager.overWriteObjectFile(managerfile, Lists.getManagerList());
+                System.out.println("manager.txt updated");
                 FileManager.overWriteObjectFile(teamfile, Lists.getTeamList());
+                System.out.println("teams.txt updated");
                 System.out.println("Manager removed successfully.");
             }
             case 2 -> buyPlayerAsOwner(t);
             case 3 -> sellPlayerAsOwner(t);
+            case 4 -> {
+                ArrayList<Manager> managers = Lists.getManagerList();
+                System.out.println("Available managers:");
+                for (Manager m : managers) {
+                    if (m.getIsAvailable()) {
+                        System.out.println("ID: " + m.getId() + " Name: " + m.getName());
+                    }
+                }
+                int id = Tools.readInt(in, "Enter Manager ID to assign: ");
+                Manager selected = null;
+                for (Manager m : managers) {
+                    if (m.getId() == id && m.getIsAvailable()) {
+                        selected = m;
+                        break;
+                    }
+                }
+                if (selected == null) {
+                    System.out.println("Manager not found or not available.");
+                    return;
+                }
+                if (t.getManager() != null) {
+                    t.getManager().setIsAvailable(true);
+                    t.getManager().setTeamId(0);
+                }
+                t.setManager(selected);
+                selected.setIsAvailable(false);
+                selected.setTeamId(t.getId());
+                FileManager.overWriteObjectFile(managerfile, Lists.getManagerList());
+                System.out.println("manager.txt updated");
+                FileManager.overWriteObjectFile(teamfile, Lists.getTeamList());
+                System.out.println("teams.txt updated");
+                System.out.println("Manager assigned successfully.");
+            }
             default -> System.out.println("Invalid Option.");
         }
     }
@@ -115,7 +152,9 @@ public class OwnerLogin {
 
         // update files
         FileManager.overWriteObjectFile(teamfile, Lists.getTeamList());
+        System.out.println("teams.txt updated");
         FileManager.overWriteObjectFile(playerfile, Lists.getPlayerList());
+        System.out.println("players.txt updated");
     }
 
     public static void sellPlayerAsOwner(Team t) throws IOException {
@@ -154,7 +193,9 @@ public class OwnerLogin {
         System.out.println("Player sold successfully.");
 
         FileManager.overWriteObjectFile(playerfile, Lists.getPlayerList());
+        System.out.println("players.txt updated");
         FileManager.overWriteObjectFile(teamfile, Lists.getTeamList());
+        System.out.println("teams.txt updated");
     }
 
     public static void ownerFeatures(Scanner sc, String name) throws IOException {
@@ -198,5 +239,57 @@ public class OwnerLogin {
                 default -> System.out.println("Invalid option.");
             }
         }
+    }
+
+    // Method for owner to buy a team
+    public static void buyTeam(Owner owner) throws IOException {
+        ArrayList<Team> teams = Lists.getTeamList();
+        System.out.println("\n--- Available Teams for Purchase ---");
+        boolean hasAvailable = false;
+        for (Team t : teams) {
+            if (t.getOwner() == null && t.getCurrentSize() == 0 && t.getManager() == null) {
+                System.out.println("Team ID: " + t.getId() + " | Name: " + t.getTeamName() + 
+                        " | Price: $" + t.getTeamPrice() + " | Budget: $" + t.getBudget());
+                hasAvailable = true;
+            }
+        }
+        
+        if (!hasAvailable) {
+            System.out.println("No teams available for purchase.");
+            return;
+        }
+        
+        int teamId = Tools.readInt(in, "Enter Team ID to buy: ");
+        Team selectedTeam = null;
+        for (Team t : teams) {
+            if (t.getId() == teamId && t.getOwner() == null && t.getCurrentSize() == 0 && t.getManager() == null) {
+                selectedTeam = t;
+                break;
+            }
+        }
+        
+        if (selectedTeam == null) {
+            System.out.println("Team not available for purchase.");
+            return;
+        }
+        
+        if (owner.getBudget() < selectedTeam.getTeamPrice()) {
+            System.out.println("Insufficient budget. Required: $" + selectedTeam.getTeamPrice() + 
+                    " | Available: $" + owner.getBudget());
+            return;
+        }
+        
+        // Purchase team
+        owner.setBudget(owner.getBudget() - selectedTeam.getTeamPrice());
+        selectedTeam.setOwner(owner);
+        
+        // Update files
+        FileManager.overWriteObjectFile(ownerfile, Lists.getOwnerList());
+        System.out.println("owner.txt updated");
+        FileManager.overWriteObjectFile(teamfile, Lists.getTeamList());
+        System.out.println("teams.txt updated");
+        
+        System.out.println("Team purchased successfully! Your new budget: $" + owner.getBudget());
+        System.out.println("You can now assign a manager and edit your team.");
     }
 }

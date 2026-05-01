@@ -7,12 +7,14 @@ import java.io.IOException;
 public class Manager extends Entity{
     private int id;
     private boolean isAvailable;
+    private int teamId;
     private static final String managerfile ="manager.txt";
 
     public Manager( String name, String password) throws IOException {
         this.id= Tools.idGenerator(managerfile);
         super(name, password);
         this.isAvailable = true;
+        this.teamId = 0;
     }
 
     public boolean getIsAvailable() {
@@ -27,14 +29,21 @@ public class Manager extends Entity{
         return id;
     }
 
-
     public void setId(int id) {
         this.id = id;
     }
 
+    public int getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(int teamId) {
+        this.teamId = teamId;
+    }
+
     @Override
     public String toString() {
-        return this.id+","+this.getName()+","+this.isAvailable+","+this.getPassword();
+        return this.id+","+this.getName()+","+this.isAvailable+","+this.getPassword()+","+this.teamId;
     }
 
     public void displayInfo(){

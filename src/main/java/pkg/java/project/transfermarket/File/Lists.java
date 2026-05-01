@@ -86,9 +86,11 @@ public class Lists {
                 String name = parts[1];
                 boolean isAvailable = Boolean.parseBoolean(parts[2]);
                 String password = parts[3];
+                int teamId = parts.length >= 5 ? Integer.parseInt(parts[4]) : 0;
                 Manager manager = new Manager(name, password);
                 manager.setId(id);
                 manager.setIsAvailable(isAvailable);
+                manager.setTeamId(teamId);
                 managerList.add(manager);
             }
         }
