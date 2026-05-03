@@ -10,6 +10,7 @@
         "${workspaceFolder}"
       ],
       "classPaths": [
+        "${workspaceFolder}/target/classes",
         "${workspaceFolder}/.vscode/bin",
         "${workspaceFolder}"
       ],

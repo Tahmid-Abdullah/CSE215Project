@@ -14,7 +14,12 @@ if (-not (Test-Path -LiteralPath $javaFxLib)) {
     throw "JavaFX library folder was not found at $javaFxLib"
 }
 
-$javaFiles = Get-ChildItem -Path (Join-Path $workspace "transfermarket") -Recurse -File -Filter "*.java" |
+$javaFiles = @()
+$rootLauncher = Join-Path $workspace "Launcher.java"
+if (Test-Path -LiteralPath $rootLauncher) {
+    $javaFiles += $rootLauncher
+}
+$javaFiles += Get-ChildItem -Path (Join-Path $workspace "transfermarket") -Recurse -File -Filter "*.java" |
     ForEach-Object { $_.FullName }
 
 if (-not $javaFiles -or $javaFiles.Count -eq 0) {
