@@ -5,8 +5,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import pkg.java.project.transfermarket.Backend.entities.*;
-import pkg.java.project.transfermarket.File.Lists;
-
+import pkg.java.project.transfermarket.File.*;
+import  java.util.*;
 import java.io.IOException;
 
 public class AdminController {
@@ -44,7 +44,7 @@ public class AdminController {
     protected void onViewManagers() {
         try {
             outputArea.clear();
-            java.util.ArrayList<Manager> managers = Lists.getManagerList();
+            ArrayList<Manager> managers = Lists.getManagerList();
             if (managers.isEmpty()) {
                 outputArea.appendText("No managers available.\n");
             } else {
@@ -62,7 +62,7 @@ public class AdminController {
     protected void onViewTeams() {
         try {
             outputArea.clear();
-            java.util.ArrayList<Team> teams = Lists.getTeamList();
+            ArrayList<Team> teams = Lists.getTeamList();
             if (teams.isEmpty()) {
                 outputArea.appendText("No teams available.\n");
             } else {
@@ -81,7 +81,7 @@ public class AdminController {
     protected void onViewPlayers() {
         try {
             outputArea.clear();
-            java.util.ArrayList<Player> players = Lists.getPlayerList();
+            ArrayList<Player> players = Lists.getPlayerList();
             if (players.isEmpty()) {
                 outputArea.appendText("No players available.\n");
             } else {
@@ -236,7 +236,7 @@ public class AdminController {
 
         // Populate managers
         try {
-            java.util.ArrayList<Manager> managers = Lists.getManagerList();
+            ArrayList<Manager> managers = Lists.getManagerList();
             for (Manager m : managers) {
                 managerChoice.getItems().add(m.getId() + " - " + m.getName() + (m.getIsAvailable() ? " (Available)" : " (Booked)"));
             }
@@ -272,7 +272,7 @@ public class AdminController {
                         return null;
                     }
                     int managerId = Integer.parseInt(managerSelection.split(" - ")[0].trim());
-                    java.util.ArrayList<Manager> mlist = Lists.getManagerList();
+                    ArrayList<Manager> mlist = Lists.getManagerList();
                     Manager selectedManager = null;
                     for (Manager m : mlist) {
                         if (m.getId() == managerId) {
@@ -301,11 +301,11 @@ public class AdminController {
                     selectedManager.setIsAvailable(false);
                     Lists.addTeam(t);
                     // Persist changes
-                    pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.MANAGER_FILE, Lists.getManagerList());
+                    FileManager.overWriteObjectFile(FileManager.MANAGER_FILE, Lists.getManagerList());
                     System.out.println("manager.txt updated");
-                    pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.TEAM_FILE, Lists.getTeamList());
+                    FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
                     System.out.println("teams.txt updated");
-                    pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.OWNER_FILE, Lists.getOwnerList());
+                    FileManager.overWriteObjectFile(FileManager.OWNER_FILE, Lists.getOwnerList());
                     System.out.println("owner.txt updated");
 
                     outputArea.appendText("Team added successfully with ID " + t.getId() + ".\n");
@@ -324,7 +324,7 @@ public class AdminController {
         // First show available teams
         try {
             outputArea.clear();
-            java.util.ArrayList<Team> teams = Lists.getTeamList();
+            ArrayList<Team> teams = Lists.getTeamList();
             if (teams.isEmpty()) {
                 outputArea.appendText("No teams available to remove.\n");
                 return;
@@ -350,7 +350,7 @@ public class AdminController {
         
         try {
             int id = Integer.parseInt(idStr);
-            java.util.ArrayList<Team> teams = Lists.getTeamList();
+            ArrayList<Team> teams = Lists.getTeamList();
             Team targetTeam = null;
             for (Team t : teams) {
                 if (t.getId() == id) {
@@ -376,7 +376,7 @@ public class AdminController {
             
             // Remove team and update files
             teams.remove(targetTeam);
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.TEAM_FILE, Lists.getTeamList());
+            FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
             System.out.println("teams.txt updated");
             outputArea.appendText("Team removed successfully.\n");
         } catch (NumberFormatException e) {
@@ -406,7 +406,7 @@ public class AdminController {
 
         // Populate managers
         try {
-            java.util.ArrayList<Manager> managers = Lists.getManagerList();
+            ArrayList<Manager> managers = Lists.getManagerList();
             for (Manager m : managers) {
                 managerChoice.getItems().add(m.getId() + " - " + m.getName() + (m.getIsAvailable() ? " (Available)" : " (Booked)"));
             }
@@ -442,7 +442,7 @@ public class AdminController {
                         return null;
                     }
                     int managerId = Integer.parseInt(managerSelection.split(" - ")[0].trim());
-                    java.util.ArrayList<Manager> mlist = Lists.getManagerList();
+                    ArrayList<Manager> mlist = Lists.getManagerList();
                     Manager selectedManager = null;
                     for (Manager m : mlist) {
                         if (m.getId() == managerId) {
@@ -472,11 +472,11 @@ public class AdminController {
                     selectedManager.setTeamId(t.getId());
                     Lists.addTeam(t);
                     // Persist changes
-                    pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.MANAGER_FILE, Lists.getManagerList());
+                    FileManager.overWriteObjectFile(FileManager.MANAGER_FILE, Lists.getManagerList());
                     System.out.println("manager.txt updated");
-                    pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.TEAM_FILE, Lists.getTeamList());
+                    FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
                     System.out.println("teams.txt updated");
-                    pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.OWNER_FILE, Lists.getOwnerList());
+                    FileManager.overWriteObjectFile(FileManager.OWNER_FILE, Lists.getOwnerList());
                     System.out.println("owner.txt updated");
 
                     outputArea.appendText("Owner and team added successfully with ID " + o.getId() + " and team ID " + t.getId() + ".\n");
@@ -495,7 +495,7 @@ public class AdminController {
         // First show owners
         try {
             outputArea.clear();
-            java.util.ArrayList<Owner> owners = Lists.getOwnerList();
+            ArrayList<Owner> owners = Lists.getOwnerList();
             if (owners.isEmpty()) {
                 outputArea.appendText("No owners available.\n");
                 return;
@@ -518,7 +518,7 @@ public class AdminController {
         
         try {
             int id = Integer.parseInt(idStr);
-            java.util.ArrayList<Owner> owners = Lists.getOwnerList();
+            ArrayList<Owner> owners = Lists.getOwnerList();
             Owner targetOwner = null;
             for (Owner o : owners) {
                 if (o.getId() == id) {
@@ -532,7 +532,7 @@ public class AdminController {
             }
             
             // Find teams owned by this owner
-            java.util.ArrayList<Team> teams = Lists.getTeamList();
+           ArrayList<Team> teams = Lists.getTeamList();
             Team ownedTeam = null;
             for (Team t : teams) {
                 if (t.getOwner() != null && t.getOwner().getId() == id) {
@@ -553,14 +553,14 @@ public class AdminController {
                 }
                 // Set team owner to null instead of removing owner
                 ownedTeam.setOwner(null);
-                pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.TEAM_FILE, Lists.getTeamList());
+                FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
                 System.out.println("teams.txt updated");
                 outputArea.appendText("Team owner set to null.\n");
             }
             
             // Remove owner
             owners.remove(targetOwner);
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.OWNER_FILE, Lists.getOwnerList());
+            FileManager.overWriteObjectFile(FileManager.OWNER_FILE, Lists.getOwnerList());
             System.out.println("owner.txt updated");
             outputArea.appendText("Owner removed successfully.\n");
         } catch (IOException e) {
@@ -572,12 +572,12 @@ public class AdminController {
     protected void onViewOwners() {
         try {
             outputArea.clear();
-            java.util.ArrayList<Owner> owners = Lists.getOwnerList();
+            ArrayList<Owner> owners = Lists.getOwnerList();
             if (owners.isEmpty()) {
                 outputArea.appendText("No owners available.\n");
                 return;
             }
-            java.util.ArrayList<Team> teams = Lists.getTeamList();
+            ArrayList<Team> teams = Lists.getTeamList();
             outputArea.appendText("--- Owners and Their Teams ---\n");
             for (Owner owner : owners) {
                 outputArea.appendText("ID: " + owner.getId() + " | Name: " + owner.getName() + " | Budget: $" + owner.getBudget() + "\n");
@@ -637,7 +637,7 @@ public class AdminController {
                     
                     Owner o = new Owner(ownerName, ownerPass, ownerBudget);
                     Lists.addOwner(o);
-                    pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.OWNER_FILE, Lists.getOwnerList());
+                    FileManager.overWriteObjectFile(FileManager.OWNER_FILE, Lists.getOwnerList());
                     System.out.println("owner.txt updated");
                     
                     outputArea.appendText("Owner added successfully with ID " + o.getId() + ".\n");

@@ -4,8 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import pkg.java.project.transfermarket.Backend.entities.*;
-import pkg.java.project.transfermarket.File.Lists;
-
+import pkg.java.project.transfermarket.File.*;
+import java.util.*;
 import java.io.IOException;
 
 public class OwnerController {
@@ -23,7 +23,7 @@ public class OwnerController {
     protected void onViewMyTeam() {
         try {
             outputArea.clear();
-            java.util.ArrayList<Team> teams = Lists.getTeamList();
+            ArrayList<Team> teams = Lists.getTeamList();
             boolean found = false;
             
             for (Team t : teams) {
@@ -61,7 +61,7 @@ public class OwnerController {
         try {
             outputArea.clear();
             
-            java.util.ArrayList<Team> teams = Lists.getTeamList();
+            ArrayList<Team> teams = Lists.getTeamList();
             Team targetTeam = null;
             
             for (Team t : teams) {
@@ -98,7 +98,7 @@ public class OwnerController {
             String newPass = passDialog.showAndWait().orElse(null);
             if (newPass == null || newPass.isBlank()) return;
 
-            java.util.ArrayList<Owner> owners = Lists.getOwnerList();
+            ArrayList<Owner> owners = Lists.getOwnerList();
             Owner target = null;
             for (Owner o : owners) {
                 if (o.getName().equals(ownerName)) {
@@ -113,8 +113,8 @@ public class OwnerController {
             target.setName(newName);
             target.setPassword(newPass);
             // Persist owners and teams (owner name appears in teams)
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.OWNER_FILE, Lists.getOwnerList());
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.TEAM_FILE, Lists.getTeamList());
+            FileManager.overWriteObjectFile(FileManager.OWNER_FILE, Lists.getOwnerList());
+            FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
             this.ownerName = newName;
             ownerTitle.setText("Owner Dashboard - " + newName);
             outputArea.appendText("Credentials updated successfully.\n");
@@ -161,9 +161,9 @@ public class OwnerController {
             team.setManager(null);
             m.setIsAvailable(true);
             m.setTeamId(0);
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.MANAGER_FILE, Lists.getManagerList());
+            FileManager.overWriteObjectFile(FileManager.MANAGER_FILE, Lists.getManagerList());
             System.out.println("manager.txt updated");
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.TEAM_FILE, Lists.getTeamList());
+            FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
             System.out.println("teams.txt updated");
             outputArea.appendText("Manager removed successfully.\n");
         } catch (IOException e) {
@@ -176,7 +176,7 @@ public class OwnerController {
             outputArea.clear();
             outputArea.appendText("--- Available Players ---\n");
             
-            java.util.ArrayList<Player> players = Lists.getPlayerList();
+            ArrayList<Player> players = Lists.getPlayerList();
             for (Player p : players) {
                 if (p.getIsAvailable()) {
                     outputArea.appendText("ID: " + p.getId() + " | Name: " + p.getName() + 
@@ -224,9 +224,9 @@ public class OwnerController {
             selectedPlayer.setIsAvailable(false);
             selectedPlayer.setTeamId(team.getId());
             
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.TEAM_FILE, Lists.getTeamList());
+            FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
             System.out.println("teams.txt updated");
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.PLAYER_FILE, Lists.getPlayerList());
+            FileManager.overWriteObjectFile(FileManager.PLAYER_FILE, Lists.getPlayerList());
             System.out.println("players.txt updated");
             
             outputArea.appendText("Player bought successfully!\n");
@@ -282,9 +282,9 @@ public class OwnerController {
             selectedPlayer.setIsAvailable(true);
             selectedPlayer.setTeamId(0);
             
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.PLAYER_FILE, Lists.getPlayerList());
+           FileManager.overWriteObjectFile(FileManager.PLAYER_FILE, Lists.getPlayerList());
             System.out.println("players.txt updated");
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.TEAM_FILE, Lists.getTeamList());
+            FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
             System.out.println("teams.txt updated");
             
             outputArea.appendText("Player sold successfully! Budget: $" + team.getBudget() + "\n");
@@ -299,7 +299,7 @@ public class OwnerController {
             outputArea.clear();
             outputArea.appendText("--- Available Managers ---\n");
             
-            java.util.ArrayList<Manager> managers = Lists.getManagerList();
+            ArrayList<Manager> managers = Lists.getManagerList();
             for (Manager m : managers) {
                 if (m.getIsAvailable()) {
                     outputArea.appendText("ID: " + m.getId() + " | Name: " + m.getName() + 
@@ -339,9 +339,9 @@ public class OwnerController {
              selectedManager.setIsAvailable(false);
              selectedManager.setTeamId(team.getId());
             
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.MANAGER_FILE, Lists.getManagerList());
+            FileManager.overWriteObjectFile(FileManager.MANAGER_FILE, Lists.getManagerList());
             System.out.println("manager.txt updated");
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.TEAM_FILE, Lists.getTeamList());
+            FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
             System.out.println("teams.txt updated");
             
             outputArea.appendText("Manager assigned successfully!\n");
@@ -355,7 +355,7 @@ public class OwnerController {
      protected void onBuyTeam() {
          try {
              // First, get the owner
-             java.util.ArrayList<Owner> owners = Lists.getOwnerList();
+             ArrayList<Owner> owners = Lists.getOwnerList();
              Owner currentOwner = null;
              for (Owner o : owners) {
                  if (o.getName().equals(ownerName)) {
@@ -370,7 +370,7 @@ public class OwnerController {
              }
              
              // Check if owner already has a team
-             java.util.ArrayList<Team> teams = Lists.getTeamList();
+             ArrayList<Team> teams = Lists.getTeamList();
              for (Team t : teams) {
                  if (t.getOwner() != null && t.getOwner().getId() == currentOwner.getId()) {
                      outputArea.appendText("You already own a team. You can only own one team.\n");
@@ -381,7 +381,7 @@ public class OwnerController {
              // Show available teams
              outputArea.clear();
              outputArea.appendText("--- Available Teams for Purchase ---\n");
-             java.util.ArrayList<Team> availableTeams = new java.util.ArrayList<>();
+             ArrayList<Team> availableTeams = new ArrayList<>();
              for (Team t : teams) {
                  if (t.getOwner() == null && t.getCurrentSize() == 0 && t.getManager() == null) {
                      outputArea.appendText("Team ID: " + t.getId() + " | Name: " + t.getTeamName() + 
@@ -429,9 +429,9 @@ public class OwnerController {
              selectedTeam.setOwner(currentOwner);
              
              // Update lists and files
-             pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.OWNER_FILE, Lists.getOwnerList());
+             FileManager.overWriteObjectFile(FileManager.OWNER_FILE, Lists.getOwnerList());
              System.out.println("owner.txt updated");
-             pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile(pkg.java.project.transfermarket.File.FileManager.TEAM_FILE, Lists.getTeamList());
+             FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
              System.out.println("teams.txt updated");
              
              outputArea.appendText("Team purchased successfully! Your new budget: $" + currentOwner.getBudget() + "\n");

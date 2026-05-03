@@ -5,8 +5,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import pkg.java.project.transfermarket.Backend.actions.ManagerLogin;
 import pkg.java.project.transfermarket.Backend.entities.*;
-import pkg.java.project.transfermarket.File.Lists;
-
+import pkg.java.project.transfermarket.File.*;
+import java.util.*;
 import java.io.IOException;
 
 public class ManagerController {
@@ -33,7 +33,7 @@ public class ManagerController {
         
         try {
             int id = Integer.parseInt(idStr);
-            java.util.ArrayList<Manager> managers = Lists.getManagerList();
+            ArrayList<Manager> managers = Lists.getManagerList();
             Manager targetManager = null;
             
             for (Manager m : managers) {
@@ -58,9 +58,9 @@ public class ManagerController {
             
             targetManager.setName(newName);
             targetManager.setPassword(newPassword);
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("manager.txt",Lists.getManagerList());
+            FileManager.overWriteObjectFile("manager.txt",Lists.getManagerList());
             // also persist teams since manager names are referenced in teams
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("teams.txt", Lists.getTeamList());
+            FileManager.overWriteObjectFile("teams.txt", Lists.getTeamList());
             outputArea.appendText("Manager credentials updated successfully!\n");
             this.managerName = newName;
             managerTitle.setText("Manager Dashboard - " + newName);
@@ -113,7 +113,7 @@ public class ManagerController {
             outputArea.clear();
             outputArea.appendText("--- Available Players ---\n");
             
-            java.util.ArrayList<Player> players = Lists.getPlayerList();
+            ArrayList<Player> players = Lists.getPlayerList();
             for (Player p : players) {
                 if (p.getIsAvailable()) {
                     outputArea.appendText("ID: " + p.getId() + " | Name: " + p.getName() + 
@@ -131,7 +131,7 @@ public class ManagerController {
             
             int playerId = Integer.parseInt(idStr);
             
-            java.util.ArrayList<Team> teams = Lists.getTeamList();
+            ArrayList<Team> teams = Lists.getTeamList();
             Team myTeam = null;
             
             for (Team t : teams) {
@@ -176,8 +176,8 @@ public class ManagerController {
             selectedPlayer.setIsAvailable(false);
             selectedPlayer.setTeamId(myTeam.getId());
             
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("teams.txt", Lists.getTeamList());
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("players.txt", Lists.getPlayerList());
+            FileManager.overWriteObjectFile("teams.txt", Lists.getTeamList());
+            FileManager.overWriteObjectFile("players.txt", Lists.getPlayerList());
             
             outputArea.appendText("Player bought successfully!\n");
             
@@ -191,7 +191,7 @@ public class ManagerController {
         try {
             outputArea.clear();
             
-            java.util.ArrayList<Team> teams = Lists.getTeamList();
+            ArrayList<Team> teams = Lists.getTeamList();
             Team myTeam = null;
             
             for (Team t : teams) {
@@ -245,8 +245,8 @@ public class ManagerController {
             selectedPlayer.setIsAvailable(true);
             selectedPlayer.setTeamId(0);
             
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("players.txt", Lists.getPlayerList());
-            pkg.java.project.transfermarket.File.FileManager.overWriteObjectFile("teams.txt", Lists.getTeamList());
+            FileManager.overWriteObjectFile("players.txt", Lists.getPlayerList());
+            FileManager.overWriteObjectFile("teams.txt", Lists.getTeamList());
             
             outputArea.appendText("Player sold successfully! Budget: $" + myTeam.getBudget() + "\n");
             
@@ -261,7 +261,7 @@ public class ManagerController {
             outputArea.clear();
             outputArea.appendText("--- Available Players ---\n");
             
-            java.util.ArrayList<Player> players = Lists.getPlayerList();
+            ArrayList<Player> players = Lists.getPlayerList();
             for (Player p : players) {
                 outputArea.appendText("ID: " + p.getId() + " | Name: " + p.getName() + 
                                     " | Goals: " + p.getGoal() + " | Matches: " + p.getMatches() + "\n");
