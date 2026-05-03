@@ -371,11 +371,11 @@ public class OwnerController {
              
              // Check if owner already has a team
              ArrayList<Team> teams = Lists.getTeamList();
-            for (Team t : teams) {
-                if (t.getOwner() != null && t.getOwner().getId() == currentOwner.getId()) {
-                    outputArea.appendText("You already own a team. You can only own one team.\n");
-                    return;
-                }
+             for (Team t : teams) {
+                 if (t.getOwner() != null && t.getOwner().getId() == currentOwner.getId()) {
+                     outputArea.appendText("You already own a team. You can only own one team.\n");
+                     return;
+                 }
              }
              
              // Show available teams
@@ -427,7 +427,6 @@ public class OwnerController {
              // Purchase team
              currentOwner.setBudget(currentOwner.getBudget() - selectedTeam.getTeamPrice());
              selectedTeam.setOwner(currentOwner);
-             currentOwner.setTeam(selectedTeam);
              
              // Update lists and files
              FileManager.overWriteObjectFile(FileManager.OWNER_FILE, Lists.getOwnerList());

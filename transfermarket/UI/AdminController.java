@@ -69,9 +69,7 @@ public class AdminController {
                 for (Team t : teams) {
                     outputArea.appendText("ID: " + t.getId() + " | Name: " + t.getTeamName() + 
                                         " | Manager: " + (t.getManager() != null ? t.getManager().getName() : "None") +
-                                        " | Owner: " + (t.getOwner() != null ? t.getOwner().getName() : "For Sale") +
-                                        " | Size: " + t.getCurrentSize() + "/11 | Budget: $" + t.getBudget() +
-                                        " | Price: $" + t.getTeamPrice() + "\n");
+                                        " | Size: " + t.getCurrentSize() + " | Budget: $" + t.getBudget() + "\n");
                 }
             }
         } catch (Exception e) {
@@ -222,22 +220,44 @@ public class AdminController {
     protected void onAddTeam() {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Add Team");
-        dialog.setHeaderText("Register a team for sale:");
+        dialog.setHeaderText("Enter team and owner details:");
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
 
         TextField teamNameField = new TextField();
+        ComboBox<String> managerChoice = new ComboBox<>();
         TextField budgetField = new TextField();
         TextField priceField = new TextField();
+        TextField ownerNameField = new TextField();
+        PasswordField ownerPasswordField = new PasswordField();
+        TextField ownerBudgetField = new TextField();
+
+        // Populate managers
+        try {
+            ArrayList<Manager> managers = Lists.getManagerList();
+            for (Manager m : managers) {
+                managerChoice.getItems().add(m.getId() + " - " + m.getName() + (m.getIsAvailable() ? " (Available)" : " (Booked)"));
+            }
+        } catch (Exception e) {
+            outputArea.appendText("Error loading managers: " + e.getMessage() + "\n");
+        }
 
         grid.add(new Label("Team Name:"), 0, 0);
         grid.add(teamNameField, 1, 0);
-        grid.add(new Label("Transfer Budget:"), 0, 1);
-        grid.add(budgetField, 1, 1);
-        grid.add(new Label("Club Price:"), 0, 2);
-        grid.add(priceField, 1, 2);
+        grid.add(new Label("Manager (choose ID - name):"), 0, 1);
+        grid.add(managerChoice, 1, 1);
+        grid.add(new Label("Team Budget:"), 0, 2);
+        grid.add(budgetField, 1, 2);
+        grid.add(new Label("Team Price:"), 0, 3);
+        grid.add(priceField, 1, 3);
+        grid.add(new Label("Owner Name:"), 0, 4);
+        grid.add(ownerNameField, 1, 4);
+        grid.add(new Label("Owner Password:"), 0, 5);
+        grid.add(ownerPasswordField, 1, 5);
+        grid.add(new Label("Owner Budget:"), 0, 6);
+        grid.add(ownerBudgetField, 1, 6);
 
         dialog.getDialogPane().setContent(grid);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
@@ -246,19 +266,49 @@ public class AdminController {
             if (dialogButton == ButtonType.OK) {
                 try {
                     String teamName = teamNameField.getText();
-                    if (teamName == null || teamName.isBlank()) {
-                        outputArea.appendText("Please fill in the team name.\n");
+                    String managerSelection = managerChoice.getValue();
+                    if (teamName == null || teamName.isBlank() || managerSelection == null) {
+                        outputArea.appendText("Please fill in team name and select a manager.\n");
+                        return null;
+                    }
+                    int managerId = Integer.parseInt(managerSelection.split(" - ")[0].trim());
+                    ArrayList<Manager> mlist = Lists.getManagerList();
+                    Manager selectedManager = null;
+                    for (Manager m : mlist) {
+                        if (m.getId() == managerId) {
+                            selectedManager = m;
+                            break;
+                        }
+                    }
+                    if (selectedManager == null) {
+                        outputArea.appendText("Manager not found.\n");
+                        return null;
+                    }
+                    if (!selectedManager.getIsAvailable()) {
+                        outputArea.appendText("Selected manager is already booked.\n");
                         return null;
                     }
                     double tBudget = Double.parseDouble(budgetField.getText());
                     double tPrice = Double.parseDouble(priceField.getText());
+                    String ownerName = ownerNameField.getText();
+                    String ownerPass = ownerPasswordField.getText();
+                    double ownerBudget = Double.parseDouble(ownerBudgetField.getText());
 
-                    Team t = new Team(teamName, null, tBudget, tPrice, null);
+                    // Create owner and team, update lists and files
+                    Owner o = new Owner(ownerName, ownerPass, ownerBudget);
+                    Lists.addOwner(o);
+                    Team t = new Team(teamName, selectedManager, tBudget, tPrice, o);
+                    selectedManager.setIsAvailable(false);
                     Lists.addTeam(t);
+                    // Persist changes
+                    FileManager.overWriteObjectFile(FileManager.MANAGER_FILE, Lists.getManagerList());
+                    System.out.println("manager.txt updated");
                     FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
                     System.out.println("teams.txt updated");
+                    FileManager.overWriteObjectFile(FileManager.OWNER_FILE, Lists.getOwnerList());
+                    System.out.println("owner.txt updated");
 
-                    outputArea.appendText("Team registered for sale with ID " + t.getId() + ".\n");
+                    outputArea.appendText("Team added successfully with ID " + t.getId() + ".\n");
                 } catch (Exception e) {
                     outputArea.appendText("Error creating team: " + e.getMessage() + "\n");
                 }
@@ -321,11 +371,6 @@ public class AdminController {
             
             if (targetTeam.getManager() != null) {
                 outputArea.appendText("Cannot remove team. Team still has a manager assigned.\n");
-                return;
-            }
-
-            if (targetTeam.getOwner() != null) {
-                outputArea.appendText("Cannot remove team. Team is owned by " + targetTeam.getOwner().getName() + ".\n");
                 return;
             }
             
@@ -423,7 +468,6 @@ public class AdminController {
                     Owner o = new Owner(ownerName, ownerPass, ownerBudget);
                     Lists.addOwner(o);
                     Team t = new Team(teamName, selectedManager, tBudget, tPrice, o);
-                    o.setTeam(t);
                     selectedManager.setIsAvailable(false);
                     selectedManager.setTeamId(t.getId());
                     Lists.addTeam(t);
@@ -509,7 +553,6 @@ public class AdminController {
                 }
                 // Set team owner to null instead of removing owner
                 ownedTeam.setOwner(null);
-                targetOwner.setTeam(null);
                 FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
                 System.out.println("teams.txt updated");
                 outputArea.appendText("Team owner set to null.\n");
@@ -541,14 +584,14 @@ public class AdminController {
                 boolean hasTeam = false;
                 for (Team t : teams) {
                     if (t.getOwner() != null && t.getOwner().getId() == owner.getId()) {
-                        outputArea.appendText("   - Team: " + t.getTeamName() + " (ID: " + t.getId() + ") | Manager: " + 
+                        outputArea.appendText("   ├─ Team: " + t.getTeamName() + " (ID: " + t.getId() + ") | Manager: " + 
                                 (t.getManager() != null ? t.getManager().getName() : "None") + " | Budget: $" + t.getBudget() + 
                                 " | Players: " + t.getCurrentSize() + "/11\n");
                         hasTeam = true;
                     }
                 }
                 if (!hasTeam) {
-                    outputArea.appendText("   - No team owned\n");
+                    outputArea.appendText("   └─ No team owned\n");
                 }
             }
         } catch (Exception e) {

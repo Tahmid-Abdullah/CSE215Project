@@ -23,12 +23,21 @@ public class ManagerController {
     
     @FXML
     protected void onUpdateCredentials() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Update Credentials");
+        dialog.setHeaderText("First, enter your Manager ID:");
+        dialog.setContentText("Manager ID:");
+        
+        String idStr = dialog.showAndWait().orElse(null);
+        if (idStr == null) return;
+        
         try {
+            int id = Integer.parseInt(idStr);
             ArrayList<Manager> managers = Lists.getManagerList();
             Manager targetManager = null;
             
             for (Manager m : managers) {
-                if (m.getName().equals(managerName)) {
+                if (m.getId() == id) {
                     targetManager = m;
                     break;
                 }
@@ -38,25 +47,20 @@ public class ManagerController {
                 outputArea.appendText("Manager not found.\n");
                 return;
             }
-
-            TextInputDialog dialog = new TextInputDialog(targetManager.getName());
-            dialog.setTitle("Update Credentials");
-            dialog.setHeaderText("Enter your new manager name:");
+            
             dialog.setContentText("New Name:");
             String newName = dialog.showAndWait().orElse(null);
-            if (newName == null || newName.isBlank()) return;
+            if (newName == null) return;
             
-            dialog.getEditor().clear();
-            dialog.setHeaderText("Enter your new password:");
             dialog.setContentText("New Password:");
             String newPassword = dialog.showAndWait().orElse(null);
-            if (newPassword == null || newPassword.isBlank()) return;
+            if (newPassword == null) return;
             
             targetManager.setName(newName);
             targetManager.setPassword(newPassword);
-            FileManager.overWriteObjectFile(FileManager.MANAGER_FILE,Lists.getManagerList());
+            FileManager.overWriteObjectFile("manager.txt",Lists.getManagerList());
             // also persist teams since manager names are referenced in teams
-            FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
+            FileManager.overWriteObjectFile("teams.txt", Lists.getTeamList());
             outputArea.appendText("Manager credentials updated successfully!\n");
             this.managerName = newName;
             managerTitle.setText("Manager Dashboard - " + newName);
@@ -172,8 +176,8 @@ public class ManagerController {
             selectedPlayer.setIsAvailable(false);
             selectedPlayer.setTeamId(myTeam.getId());
             
-            FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
-            FileManager.overWriteObjectFile(FileManager.PLAYER_FILE, Lists.getPlayerList());
+            FileManager.overWriteObjectFile("teams.txt", Lists.getTeamList());
+            FileManager.overWriteObjectFile("players.txt", Lists.getPlayerList());
             
             outputArea.appendText("Player bought successfully!\n");
             
@@ -241,8 +245,8 @@ public class ManagerController {
             selectedPlayer.setIsAvailable(true);
             selectedPlayer.setTeamId(0);
             
-            FileManager.overWriteObjectFile(FileManager.PLAYER_FILE, Lists.getPlayerList());
-            FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
+            FileManager.overWriteObjectFile("players.txt", Lists.getPlayerList());
+            FileManager.overWriteObjectFile("teams.txt", Lists.getTeamList());
             
             outputArea.appendText("Player sold successfully! Budget: $" + myTeam.getBudget() + "\n");
             
