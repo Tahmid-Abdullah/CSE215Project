@@ -21,7 +21,8 @@
             <Separator/>
             <Separator/>
             <Button text="1. View My Team" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onViewMyTeam"/>
-            <Button text="2. Edit Team" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onEditTeam"/>
+            <Button text="2. Buy Team" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onBuyTeam"/>
+            <Button text="3. Edit Team" style="-fx-min-width: 180; -fx-text-alignment: left;" onAction="#onEditTeam"/>
             <Separator/>
             <Button text="Logout" style="-fx-min-width: 180;" onAction="#onLogout" styleClass="btn-danger"/>
         </VBox>

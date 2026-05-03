@@ -11,12 +11,14 @@ public class Tools {
         Set<Integer> ids = new HashSet<>();
 
         for(String line : lines){
+            if (line == null || line.isBlank()) {
+                continue;
+            }
             String[] cred = line.split(",");
             try {
                 ids.add(Integer.parseInt(cred[0]));
             } catch(Exception e){
-                System.out.println("Invalid ID.");
-                e.printStackTrace();
+                System.out.println("Skipping invalid ID in " + filename + ": " + line);
             }
         }
         int id = 1;

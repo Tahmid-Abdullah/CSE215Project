@@ -11,8 +11,8 @@ public class Manager extends Entity{
     private static final String managerfile ="manager.txt";
 
     public Manager( String name, String password) throws IOException {
-        this.id= Tools.idGenerator(managerfile);
         super(name, password);
+        this.id= Tools.idGenerator(managerfile);
         this.isAvailable = true;
         this.teamId = 0;
     }

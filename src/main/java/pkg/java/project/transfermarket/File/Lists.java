@@ -130,12 +130,12 @@ public class Lists {
             System.out.println("No team found with this ID.");
             return;
         }
-        if (target.getCurrentSize() == 0 && target.getManager() == null) {
+        if (target.getCurrentSize() == 0 && target.getManager() == null && target.getOwner() == null) {
             teamList.remove(target);
             FileManager.overWriteObjectFile(teamfile, teamList);
             System.out.println("teams.txt updated");
         } else {
-            System.out.println("Team already has players/manager.");
+            System.out.println("Team already has an owner, players, or manager.");
         }
     }
 
@@ -211,8 +211,7 @@ public class Lists {
                 int currentSize = Integer.parseInt(parts[3]);
                 double budget = Double.parseDouble(parts[4]);
                 String ownerName = parts[5];
-                // Note: Loading teams requires loading managers and owners first
-                // For simplicity, assuming managers and owners are loaded
+                double teamPrice = parts.length >= 7 ? Double.parseDouble(parts[6]) : 0;
                 Manager manager = null;
                 for (Manager m : managerList) {
                     if (m.getName().equals(managerName)) {
@@ -227,30 +226,33 @@ public class Lists {
                         break;
                     }
                 }
-                if (manager != null && owner != null) {
-                    Team team = new Team(name, manager, budget, 0, owner); // Price not stored, set to 0
-                    team.setId(id);
-                    team.setCurrentSize(currentSize);
-                    // Load players
-                    for (Player p : playerList) {
-                        if (p.getTeamId() == id) {
-                            team.getPlayers().add(p);
-                        }
-                    }
-                    if (team.getPlayers().isEmpty() && currentSize > 0) {
-                        // For old data, assign not available players
-                        int count = 0;
-                        for (Player p : playerList) {
-                            if (!p.getIsAvailable() && p.getTeamId() == 0 && count < currentSize) {
-                                team.getPlayers().add(p);
-                                p.setTeamId(id);
-                                count++;
-                            }
-                        }
-                    }
-                    team.setCurrentSize(team.getPlayers().size());
-                    teamList.add(team);
+                Team team = new Team(name, manager, budget, teamPrice, owner);
+                team.setId(id);
+                if (owner != null) {
+                    owner.setTeam(team);
                 }
+                if (manager != null) {
+                    manager.setIsAvailable(false);
+                    manager.setTeamId(id);
+                }
+                for (Player p : playerList) {
+                    if (p.getTeamId() == id) {
+                        team.getPlayers().add(p);
+                        p.setIsAvailable(false);
+                    }
+                }
+                if (team.getPlayers().isEmpty() && currentSize > 0) {
+                    int count = 0;
+                    for (Player p : playerList) {
+                        if (!p.getIsAvailable() && p.getTeamId() == 0 && count < currentSize) {
+                            team.getPlayers().add(p);
+                            p.setTeamId(id);
+                            count++;
+                        }
+                    }
+                }
+                team.setCurrentSize(team.getPlayers().size());
+                teamList.add(team);
             }
         }
     }

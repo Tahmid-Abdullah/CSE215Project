@@ -23,21 +23,12 @@ public class ManagerController {
     
     @FXML
     protected void onUpdateCredentials() {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Update Credentials");
-        dialog.setHeaderText("First, enter your Manager ID:");
-        dialog.setContentText("Manager ID:");
-        
-        String idStr = dialog.showAndWait().orElse(null);
-        if (idStr == null) return;
-        
         try {
-            int id = Integer.parseInt(idStr);
             ArrayList<Manager> managers = Lists.getManagerList();
             Manager targetManager = null;
             
             for (Manager m : managers) {
-                if (m.getId() == id) {
+                if (m.getName().equals(managerName)) {
                     targetManager = m;
                     break;
                 }
@@ -47,14 +38,19 @@ public class ManagerController {
                 outputArea.appendText("Manager not found.\n");
                 return;
             }
-            
+
+            TextInputDialog dialog = new TextInputDialog(targetManager.getName());
+            dialog.setTitle("Update Credentials");
+            dialog.setHeaderText("Enter your new manager name:");
             dialog.setContentText("New Name:");
             String newName = dialog.showAndWait().orElse(null);
-            if (newName == null) return;
+            if (newName == null || newName.isBlank()) return;
             
+            dialog.getEditor().clear();
+            dialog.setHeaderText("Enter your new password:");
             dialog.setContentText("New Password:");
             String newPassword = dialog.showAndWait().orElse(null);
-            if (newPassword == null) return;
+            if (newPassword == null || newPassword.isBlank()) return;
             
             targetManager.setName(newName);
             targetManager.setPassword(newPassword);

@@ -224,7 +224,7 @@ public class OwnerLogin {
                     ArrayList<Team> teamList = Lists.getTeamList();
 
                     for (Team t : teamList) {
-                        if (t.getOwner().getName().equals(name)) {
+                        if (t.getOwner() != null && t.getOwner().getName().equals(name)) {
                             target = t;
                             break;
                         }
@@ -282,6 +282,7 @@ public class OwnerLogin {
         // Purchase team
         owner.setBudget(owner.getBudget() - selectedTeam.getTeamPrice());
         selectedTeam.setOwner(owner);
+        owner.setTeam(selectedTeam);
         
         // Update files
         FileManager.overWriteObjectFile(ownerfile, Lists.getOwnerList());

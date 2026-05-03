@@ -59,7 +59,8 @@ public class AdminLogin {
         for(String singleLine:dataLines){
             String[] cred= singleLine.split(",");
             if(cred.length>=6) {
-                System.out.println("Team ID: " + cred[0] + " | Team name: " + cred[1] + " | Manager name: " + cred[2] + " | Team Size: " + cred[3] +" | Team Budget: "+cred[4]+" | Team owner: "+cred[5]);
+                String price = cred.length >= 7 ? cred[6] : "0";
+                System.out.println("Team ID: " + cred[0] + " | Team name: " + cred[1] + " | Manager name: " + cred[2] + " | Team Size: " + cred[3] +" | Team Budget: "+cred[4]+" | Team owner: "+cred[5]+" | Team price: "+price);
             }
             else {
                 System.out.println("Invalid team data: " + singleLine);
@@ -172,43 +173,13 @@ public class AdminLogin {
     public static void addTeam() throws IOException {
         try {
             String name = Tools.readString(in, "Enter Team name: ");
-            viewManagers();
-            int mid = Tools.readInt(in,"Select manager id:");
-            ArrayList<Manager> mlist = Lists.getManagerList();
-            if(mlist == null || mlist.isEmpty()){
-                System.out.println("No managers available. Please add a manager first.");
-                return;
-            }
-            Manager selectedManager = null;
-            for(Manager m : mlist){
-                if(m.getId() == mid){
-                    selectedManager = m;
-                    break;
-                }
-            }
-            if(selectedManager == null){
-                System.out.println("Manager not found.");
-                return;
-            }
-            if(!selectedManager.getIsAvailable()){
-                System.out.println("Manager is booked by another team.");
-                return;
-            }
             double b = Tools.readDouble(in,"Enter team budget: ");
             double p = Tools.readDouble(in,"Enter team price: ");
 
-            String ownerName= Tools.readString(in,"Enter owner name: ");
-            String password=Tools.readString(in,"Enter owners new password: ");
-            double ownerBudget= Tools.readDouble(in,"Enter Owners budget: ");
-            Owner o= new Owner(ownerName,password,ownerBudget);
-            Lists.addOwner(o);
-            Team t = new Team(name,selectedManager,b,p,o);
-            selectedManager.setIsAvailable(false);
+            Team t = new Team(name,null,b,p,null);
             Lists.addTeam(t);
-            // Update manager file
-            FileManager.overWriteObjectFile(managerfile,Lists.getManagerList());
-            System.out.println("manager.txt updated");
-            System.out.println("Team added successfully with ID " + t.getId() + ".");
+            FileManager.overWriteObjectFile(teamfile,Lists.getTeamList());
+            System.out.println("Team registered for sale with ID " + t.getId() + ".");
         } catch (IOException e) {
             System.out.println("Error adding team: " + e.getMessage());
         }
@@ -277,7 +248,9 @@ public class AdminLogin {
                 System.out.println("Manager is booked by another team.");
                 return;
             }
-            Team t= new Team(Tname,selectedManager,Tbudget,price,new Owner(name,password,budget));
+            Owner owner = new Owner(name,password,budget);
+            Team t= new Team(Tname,selectedManager,Tbudget,price,owner);
+            owner.setTeam(t);
             selectedManager.setIsAvailable(false);
             selectedManager.setTeamId(t.getId());
             Lists.addTeam(t);
@@ -285,10 +258,10 @@ public class AdminLogin {
             FileManager.overWriteObjectFile(managerfile,Lists.getManagerList());
             System.out.println("manager.txt updated");
             System.out.println("Team added successfully with ID " + t.getId() + ".");
-            Lists.addOwner(t.getOwner());
+            Lists.addOwner(owner);
             FileManager.overWriteObjectFile(ownerfile, Lists.getOwnerList());
             System.out.println("owner.txt updated");
-            System.out.println("Owner added successfully with ID " + t.getOwner().getId() + ".");
+            System.out.println("Owner added successfully with ID " + owner.getId() + ".");
 
         } catch (IOException e) {
             System.out.println("Error adding manager: " + e.getMessage());
@@ -335,6 +308,7 @@ public class AdminLogin {
                 }
                 // Set team owner to null instead of removing owner
                 ownedTeam.setOwner(null);
+                targetOwner.setTeam(null);
                 FileManager.overWriteObjectFile(teamfile, Lists.getTeamList());
                 System.out.println("teams.txt updated");
             }

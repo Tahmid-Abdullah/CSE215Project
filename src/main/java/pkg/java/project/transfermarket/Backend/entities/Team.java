@@ -94,7 +94,9 @@ public class Team {
     }
 
     public String toString() {
-        return this.id+","+this.teamName+","+this.manager.getName()+","+this.currentSize+","+this.budget+","+this.owner.getName();
+        String managerName = this.manager != null ? this.manager.getName() : "None";
+        String ownerName = this.owner != null ? this.owner.getName() : "None";
+        return this.id+","+this.teamName+","+managerName+","+this.currentSize+","+this.budget+","+ownerName+","+this.teamPrice;
     }
 
     public void displayTeam(){
@@ -102,9 +104,9 @@ public class Team {
         System.out.println("Team Name: " + teamName);
         System.out.println("Team size: " + currentSize);
         System.out.println("Team Budget: $" + budget);
-        System.out.println("Manager: " + getManager().getName());
+        System.out.println("Manager: " + (manager != null ? manager.getName() : "None"));
         System.out.println("Team price: "+this.teamPrice);
-        System.out.println("Team Owner: "+owner.getName());
+        System.out.println("Team Owner: "+(owner != null ? owner.getName() : "None"));
         System.out.println("Team players: \n");
         teamPlayersList();
     }
