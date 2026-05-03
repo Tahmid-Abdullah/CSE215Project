@@ -1,17 +1,17 @@
-package pkg.java.project.transfermarket.Backend.actions;
+package transfermarket.Backend.actions;
 
-import pkg.java.project.transfermarket.Backend.entities.*;
-import pkg.java.project.transfermarket.File.*;
-import pkg.java.project.transfermarket.Util.Tools;
+import transfermarket.Backend.entities.*;
+import transfermarket.File.*;
+import transfermarket.Util.Tools;
 
 import java.io.IOException;
 import java.util.*;
 
 public class ManagerLogin implements  Compare{
-    private static final String playerfile = "players.txt";
-    private static final String teamfile = "teams.txt";
-    private static final String adminFile = "admin.txt";
-    private static final String managerfile ="manager.txt";
+    private static final String playerfile = FileManager.PLAYER_FILE;
+    private static final String teamfile = FileManager.TEAM_FILE;
+    private static final String adminFile = FileManager.ADMIN_FILE;
+    private static final String managerfile = FileManager.MANAGER_FILE;
 
     static Scanner in = new Scanner(System.in);
     public static boolean checkManager(String name, String password) throws IOException {

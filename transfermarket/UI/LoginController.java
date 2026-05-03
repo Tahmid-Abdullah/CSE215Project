@@ -1,12 +1,12 @@
-package pkg.java.project.transfermarket.UI;
+package transfermarket.UI;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import pkg.java.project.transfermarket.Backend.actions.AdminLogin;
-import pkg.java.project.transfermarket.Backend.actions.ManagerLogin;
-import pkg.java.project.transfermarket.Backend.actions.OwnerLogin;
-import pkg.java.project.transfermarket.File.Lists;
+import transfermarket.Backend.actions.AdminLogin;
+import transfermarket.Backend.actions.ManagerLogin;
+import transfermarket.Backend.actions.OwnerLogin;
+import transfermarket.File.Lists;
 
 import java.io.IOException;
 

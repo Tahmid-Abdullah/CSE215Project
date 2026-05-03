@@ -1,6 +1,7 @@
-package pkg.java.project.transfermarket.Backend.entities;
+package transfermarket.Backend.entities;
 
-import pkg.java.project.transfermarket.Util.Tools;
+import transfermarket.Util.Tools;
+import transfermarket.File.FileManager;
 
 import java.io.IOException;
 
@@ -8,7 +9,7 @@ public class Manager extends Entity{
     private int id;
     private boolean isAvailable;
     private int teamId;
-    private static final String managerfile ="manager.txt";
+    private static final String managerfile = FileManager.MANAGER_FILE;
 
     public Manager( String name, String password) throws IOException {
         super(name, password);

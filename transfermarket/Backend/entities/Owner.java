@@ -1,13 +1,14 @@
-package pkg.java.project.transfermarket.Backend.entities;
+package transfermarket.Backend.entities;
 
-import pkg.java.project.transfermarket.Util.Tools;
+import transfermarket.Util.Tools;
+import transfermarket.File.FileManager;
 
 import java.io.IOException;
 
 public class Owner extends  Entity{
     private int id;
     private double ownersBudget;
-    private static final String ownerfile ="owner.txt";
+    private static final String ownerfile = FileManager.OWNER_FILE;
     private Team team;
 
     public Owner(String name, String password, double budget) throws IOException {

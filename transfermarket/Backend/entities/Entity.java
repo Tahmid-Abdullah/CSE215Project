@@ -1,4 +1,4 @@
-package pkg.java.project.transfermarket.Backend.entities;
+package transfermarket.Backend.entities;
 
 public abstract class Entity {
     private String name;

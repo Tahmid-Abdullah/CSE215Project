@@ -1,9 +1,9 @@
-package pkg.java.project.transfermarket.UI;
+package transfermarket.UI;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import pkg.java.project.transfermarket.File.FileManager;
-import pkg.java.project.transfermarket.File.Lists;
+import transfermarket.File.FileManager;
+import transfermarket.File.Lists;
 
 import java.io.IOException;
 

@@ -1,13 +1,13 @@
-package pkg.java.project.transfermarket.Backend.actions;
+package transfermarket.Backend.actions;
 
-import pkg.java.project.transfermarket.Backend.entities.*;
-import pkg.java.project.transfermarket.File.*;
-import pkg.java.project.transfermarket.Util.Tools;
+import transfermarket.Backend.entities.*;
+import transfermarket.File.*;
+import transfermarket.Util.Tools;
 
 import java.io.IOException;
 import java.util.*;
 
-import static pkg.java.project.transfermarket.Backend.actions.OwnerLogin.editTeam;
+import static transfermarket.Backend.actions.OwnerLogin.editTeam;
 
 public class AdminLogin {
     static Scanner in = new Scanner(System.in);

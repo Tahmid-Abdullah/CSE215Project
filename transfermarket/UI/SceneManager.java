@@ -1,4 +1,4 @@
-package pkg.java.project.transfermarket.UI;
+package transfermarket.UI;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -26,7 +26,7 @@ public class SceneManager {
     }
     
     public void showLoginScene() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/pkg/java/project/transfermarket/login-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/transfermarket/UI/login-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), WIDTH, HEIGHT);
         primaryStage.setTitle("Transfer Market - Login");
         primaryStage.setScene(scene);
@@ -34,7 +34,7 @@ public class SceneManager {
     }
     
     public void showAdminDashboard() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/pkg/java/project/transfermarket/admin-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/transfermarket/UI/admin-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), WIDTH, HEIGHT);
         primaryStage.setTitle("Transfer Market - Admin Dashboard");
         primaryStage.setScene(scene);
@@ -42,7 +42,7 @@ public class SceneManager {
     }
     
     public void showManagerDashboard(String managerName) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/pkg/java/project/transfermarket/manager-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/transfermarket/UI/manager-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), WIDTH, HEIGHT);
         ManagerController controller = fxmlLoader.getController();
         controller.setManagerName(managerName);
@@ -52,7 +52,7 @@ public class SceneManager {
     }
     
     public void showOwnerDashboard(String ownerName) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/pkg/java/project/transfermarket/owner-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/transfermarket/UI/owner-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), WIDTH, HEIGHT);
         OwnerController controller = fxmlLoader.getController();
         controller.setOwnerName(ownerName);

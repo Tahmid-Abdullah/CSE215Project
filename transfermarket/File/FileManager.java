@@ -1,15 +1,16 @@
-package pkg.java.project.transfermarket.File;
+package transfermarket.File;
 
 
 import java.io.*;
 import java.util.ArrayList;
 
 public class FileManager {
-    public static final String PLAYER_FILE = "players.txt";
-    public static final String TEAM_FILE = "teams.txt";
-    public static final String ADMIN_FILE = "admin.txt";
-    public static final String MANAGER_FILE = "manager.txt";
-    public static final String OWNER_FILE = "owner.txt";
+    private static final String DATABASE_DIR = "transfermarket/database/";
+    public static final String PLAYER_FILE = DATABASE_DIR + "players.txt";
+    public static final String TEAM_FILE = DATABASE_DIR + "teams.txt";
+    public static final String ADMIN_FILE = DATABASE_DIR + "admin.txt";
+    public static final String MANAGER_FILE = DATABASE_DIR + "manager.txt";
+    public static final String OWNER_FILE = DATABASE_DIR + "owner.txt";
 
     public static void FileInitialization() throws IOException{
 
@@ -71,8 +72,10 @@ public class FileManager {
         ArrayList<String> lines = new ArrayList<>();
         java.io.File f = new java.io.File(filename);
         if (!f.exists()) {
-            // create the file and return empty list instead of throwing
-            f.getParentFile();
+            File parent = f.getParentFile();
+            if (parent != null) {
+                parent.mkdirs();
+            }
             f.createNewFile();
             return lines;
         }
@@ -89,6 +92,10 @@ public class FileManager {
     public static void overwriteFile(String filename, String data) throws IOException {
         java.io.File f = new java.io.File(filename);
         if (!f.exists()) {
+            File parent = f.getParentFile();
+            if (parent != null) {
+                parent.mkdirs();
+            }
             f.createNewFile();
         }
         try(BufferedWriter bw = new BufferedWriter(new FileWriter(f, false))) {
@@ -108,6 +115,10 @@ public class FileManager {
     }
 
     public static <T> void overWriteObjectFile(String filename, ArrayList<T> list) throws IOException {
+        java.nio.file.Path path = java.nio.file.Paths.get(filename);
+        if (path.getParent() != null) {
+            java.nio.file.Files.createDirectories(path.getParent());
+        }
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename, false))) {
             for (T obj : list) {
                 bw.write(obj.toString());

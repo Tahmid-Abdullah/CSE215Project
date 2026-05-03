@@ -1,12 +1,13 @@
-package pkg.java.project.transfermarket.Backend.entities;
+package transfermarket.Backend.entities;
 
-import pkg.java.project.transfermarket.Util.Tools;
+import transfermarket.Util.Tools;
+import transfermarket.File.FileManager;
 
 import java.io.IOException;
 
 public class Player {
 
-    private static final String playerfile = "players.txt";
+    private static final String playerfile = FileManager.PLAYER_FILE;
 
     private int id;
     private String name;

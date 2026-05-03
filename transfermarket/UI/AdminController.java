@@ -1,11 +1,11 @@
-package pkg.java.project.transfermarket.UI;
+package transfermarket.UI;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import pkg.java.project.transfermarket.Backend.entities.*;
-import pkg.java.project.transfermarket.File.*;
+import transfermarket.Backend.entities.*;
+import transfermarket.File.*;
 import  java.util.*;
 import java.io.IOException;
 
@@ -32,7 +32,7 @@ public class AdminController {
             admin.setName(username);
             admin.setPassword(password);
             // Persist admin credentials
-            pkg.java.project.transfermarket.File.FileManager.overwriteFile(pkg.java.project.transfermarket.File.FileManager.ADMIN_FILE, admin.toString());
+            transfermarket.File.FileManager.overwriteFile(transfermarket.File.FileManager.ADMIN_FILE, admin.toString());
             System.out.println("admin.txt updated");
             outputArea.appendText("Admin credentials updated successfully!\n");
         } catch (Exception e) {

@@ -1,11 +1,11 @@
-package pkg.java.project.transfermarket.UI;
+package transfermarket.UI;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import pkg.java.project.transfermarket.Backend.actions.ManagerLogin;
-import pkg.java.project.transfermarket.Backend.entities.*;
-import pkg.java.project.transfermarket.File.*;
+import transfermarket.Backend.actions.ManagerLogin;
+import transfermarket.Backend.entities.*;
+import transfermarket.File.*;
 import java.util.*;
 import java.io.IOException;
 
@@ -54,9 +54,9 @@ public class ManagerController {
             
             targetManager.setName(newName);
             targetManager.setPassword(newPassword);
-            FileManager.overWriteObjectFile("manager.txt",Lists.getManagerList());
+            FileManager.overWriteObjectFile(FileManager.MANAGER_FILE,Lists.getManagerList());
             // also persist teams since manager names are referenced in teams
-            FileManager.overWriteObjectFile("teams.txt", Lists.getTeamList());
+            FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
             outputArea.appendText("Manager credentials updated successfully!\n");
             this.managerName = newName;
             managerTitle.setText("Manager Dashboard - " + newName);
@@ -172,8 +172,8 @@ public class ManagerController {
             selectedPlayer.setIsAvailable(false);
             selectedPlayer.setTeamId(myTeam.getId());
             
-            FileManager.overWriteObjectFile("teams.txt", Lists.getTeamList());
-            FileManager.overWriteObjectFile("players.txt", Lists.getPlayerList());
+            FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
+            FileManager.overWriteObjectFile(FileManager.PLAYER_FILE, Lists.getPlayerList());
             
             outputArea.appendText("Player bought successfully!\n");
             
@@ -241,8 +241,8 @@ public class ManagerController {
             selectedPlayer.setIsAvailable(true);
             selectedPlayer.setTeamId(0);
             
-            FileManager.overWriteObjectFile("players.txt", Lists.getPlayerList());
-            FileManager.overWriteObjectFile("teams.txt", Lists.getTeamList());
+            FileManager.overWriteObjectFile(FileManager.PLAYER_FILE, Lists.getPlayerList());
+            FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
             
             outputArea.appendText("Player sold successfully! Budget: $" + myTeam.getBudget() + "\n");
             

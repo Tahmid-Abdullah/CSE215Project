@@ -1,4 +1,4 @@
-package pkg.java.project.transfermarket.UI;
+package transfermarket.UI;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

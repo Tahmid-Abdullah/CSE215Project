@@ -1,6 +1,6 @@
-package pkg.java.project.transfermarket.Util;
+package transfermarket.Util;
 
-import pkg.java.project.transfermarket.File.FileManager;
+import transfermarket.File.FileManager;
 
 import java.io.IOException;
 import java.util.*;

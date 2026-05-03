@@ -1,6 +1,6 @@
-package pkg.java.project.transfermarket.Backend.entities;
+package transfermarket.Backend.entities;
 
-import pkg.java.project.transfermarket.File.FileManager;
+import transfermarket.File.FileManager;
 
 import java.io.File;
 import java.io.IOException;

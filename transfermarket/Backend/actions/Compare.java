@@ -1,6 +1,6 @@
-package pkg.java.project.transfermarket.Backend.actions;
+package transfermarket.Backend.actions;
 
-import pkg.java.project.transfermarket.Backend.entities.Player;
+import transfermarket.Backend.entities.Player;
 
 public interface Compare {
 

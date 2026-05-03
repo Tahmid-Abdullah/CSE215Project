@@ -1,11 +1,11 @@
-package pkg.java.project.transfermarket.Backend;
+package transfermarket.Backend;
 
-import pkg.java.project.transfermarket.Backend.actions.AdminLogin;
-import pkg.java.project.transfermarket.Backend.actions.ManagerLogin;
-import pkg.java.project.transfermarket.Backend.actions.OwnerLogin;
-import pkg.java.project.transfermarket.Backend.entities.*;
-import pkg.java.project.transfermarket.File.*;
-import pkg.java.project.transfermarket.Util.Tools;
+import transfermarket.Backend.actions.AdminLogin;
+import transfermarket.Backend.actions.ManagerLogin;
+import transfermarket.Backend.actions.OwnerLogin;
+import transfermarket.Backend.entities.*;
+import transfermarket.File.*;
+import transfermarket.Util.Tools;
 
 import java.io.IOException;
 import java.util.Scanner;
