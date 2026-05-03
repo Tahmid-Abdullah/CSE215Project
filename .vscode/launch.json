@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Run TransferMarket",
+      "request": "launch",
+      "mainClass": "transfermarket.UI.Launcher",
+      "sourcePaths": [
+        "${workspaceFolder}"
+      ],
+      "classPaths": [
+        "${workspaceFolder}/.vscode/bin",
+        "${workspaceFolder}"
+      ],
+      "modulePaths": [
+        "${workspaceFolder}/javafx-lib"
+      ],
+      "vmArgs": "--add-modules javafx.controls,javafx.fxml --enable-native-access=javafx.graphics",
+      "preLaunchTask": "Compile TransferMarket",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}

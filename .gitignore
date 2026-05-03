@@ -34,6 +34,12 @@ build/
 
 ### VS Code ###
 .vscode/
+!.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/compile-transfermarket.ps1
 
 ### Mac OS ###
 .DS_Store

@@ -1,0 +1,11 @@
+{
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.project.sourcePaths": [
+    "."
+  ],
+  "java.project.outputPath": ".vscode/bin",
+  "java.project.referencedLibraries": [
+    "javafx-lib/*.jar"
+  ],
+  "java.debug.settings.console": "integratedTerminal"
+}

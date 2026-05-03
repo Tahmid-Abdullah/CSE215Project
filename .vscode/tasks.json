@@ -1,0 +1,29 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Compile TransferMarket",
+      "type": "shell",
+      "command": "mvn",
+      "args": [
+        "compile"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "windows": {
+        "type": "process",
+        "command": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "args": [
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "${workspaceFolder}\\.vscode\\compile-transfermarket.ps1"
+        ]
+      },
+      "group": "build",
+      "problemMatcher": "$javac"
+    }
+  ]
+}
