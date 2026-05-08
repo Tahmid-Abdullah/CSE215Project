@@ -1,1 +1,1 @@
-1,NSU FC,Mourinho,0,100.0,Alif,0.0
+1,NSU FC,Mourinho,1,50.0,Alif,0.0

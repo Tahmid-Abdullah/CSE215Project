@@ -1,11 +1,16 @@
 package transfermarket.Backend.actions;
 
-import transfermarket.Backend.entities.*;
-import transfermarket.File.*;
-import transfermarket.Util.Tools;
-
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+import transfermarket.Backend.entities.Manager;
+import transfermarket.Backend.entities.Owner;
+import transfermarket.Backend.entities.Player;
+import transfermarket.Backend.entities.Team;
+import transfermarket.File.FileManager;
+import transfermarket.File.Lists;
+import transfermarket.Util.Tools;
 
 
 public class OwnerLogin {
@@ -49,7 +54,7 @@ public class OwnerLogin {
         System.out.println("Team not found.");
     }
 
-    // case 13:
+    
     public static void editTeam(Team t) throws IOException {
         System.out.println("""
                 1. Remove Manager.
@@ -206,6 +211,7 @@ public class OwnerLogin {
                     1. View my team
                     2. Log out
                     3. Edit team.
+                    4.Buy Team
                     """);
 
             int choice = Tools.readInt(sc, "Choose an option: ");
@@ -236,6 +242,8 @@ public class OwnerLogin {
                         editTeam(target);
                     }
                 }
+            //   case 4 -> buyTeam(n);
+
                 default -> System.out.println("Invalid option.");
             }
         }

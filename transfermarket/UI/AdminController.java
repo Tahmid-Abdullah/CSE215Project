@@ -1,13 +1,27 @@
 package transfermarket.UI;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
+import  javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import transfermarket.Backend.entities.*;
-import transfermarket.File.*;
-import  java.util.*;
-import java.io.IOException;
+import transfermarket.Backend.entities.Admin;
+import transfermarket.Backend.entities.Manager;
+import transfermarket.Backend.entities.Owner;
+import transfermarket.Backend.entities.Player;
+import transfermarket.Backend.entities.Team;
+import transfermarket.File.FileManager;
+import transfermarket.File.Lists;
+
 
 public class AdminController {
     @FXML private TextArea outputArea;
@@ -157,6 +171,126 @@ public class AdminController {
             outputArea.appendText("Player removed successfully.\n");
         } catch (IOException e) {
             outputArea.appendText("Error: " + e.getMessage() + "\n");
+        }
+    }
+    
+    @FXML
+    protected void onEditPlayer() {
+        // First show available players
+        try {
+            outputArea.clear();
+            ArrayList<Player> players = Lists.getPlayerList();
+            if (players.isEmpty()) {
+                outputArea.appendText("No players available to edit.\n");
+                return;
+            }
+            outputArea.appendText("--- Available Players ---\n");
+            for (Player p : players) {
+                outputArea.appendText("ID: " + p.getId() + " | Name: " + p.getName() + 
+                        " | Position: " + p.getPosition() + " | Age: " + p.getAge() +
+                        " | Price: $" + p.getPrice() + " | Goals: " + p.getGoal() +
+                        " | Matches: " + p.getMatches() + " | Available: " + 
+                        (p.getIsAvailable() ? "Yes" : "No") + "\n");
+            }
+        } catch (Exception e) {
+            outputArea.appendText("Error loading players: " + e.getMessage() + "\n");
+        }
+        
+        TextInputDialog idDialog = new TextInputDialog();
+        idDialog.setTitle("Edit Player");
+        idDialog.setHeaderText("Enter player ID to edit:");
+        idDialog.setContentText("Player ID:");
+        
+        String idStr = idDialog.showAndWait().orElse(null);
+        if (idStr == null) return;
+        
+        try {
+            int playerId = Integer.parseInt(idStr);
+            ArrayList<Player> players = Lists.getPlayerList();
+            Player targetPlayer = null;
+            for (Player p : players) {
+                if (p.getId() == playerId) {
+                    targetPlayer = p;
+                    break;
+                }
+            }
+            
+            if (targetPlayer == null) {
+                outputArea.appendText("Player not found.\n");
+                return;
+            }
+            
+            // Make a final reference for lambda usage
+            final Player finalPlayer = targetPlayer;
+            
+            // Show edit dialog
+            Dialog<Void> editDialog = new Dialog<>();
+            editDialog.setTitle("Edit Player");
+            editDialog.setHeaderText("Edit player details for: " + finalPlayer.getName());
+            
+            GridPane grid = new GridPane();
+            grid.setHgap(10);
+            grid.setVgap(10);
+            
+            TextField nameField = new TextField(finalPlayer.getName());
+            TextField ageField = new TextField(String.valueOf(finalPlayer.getAge()));
+            TextField positionField = new TextField(finalPlayer.getPosition());
+            TextField priceField = new TextField(String.valueOf(finalPlayer.getPrice()));
+            TextField goalsField = new TextField(String.valueOf(finalPlayer.getGoal()));
+            TextField matchesField = new TextField(String.valueOf(finalPlayer.getMatches()));
+            ComboBox<String> availabilityBox = new ComboBox<>();
+            availabilityBox.getItems().addAll("true", "false");
+            availabilityBox.setValue(String.valueOf(finalPlayer.getIsAvailable()));
+            
+            grid.add(new Label("Name:"), 0, 0);
+            grid.add(nameField, 1, 0);
+            grid.add(new Label("Age:"), 0, 1);
+            grid.add(ageField, 1, 1);
+            grid.add(new Label("Position:"), 0, 2);
+            grid.add(positionField, 1, 2);
+            grid.add(new Label("Price:"), 0, 3);
+            grid.add(priceField, 1, 3);
+            grid.add(new Label("Goals Scored:"), 0, 4);
+            grid.add(goalsField, 1, 4);
+            grid.add(new Label("Matches Played:"), 0, 5);
+            grid.add(matchesField, 1, 5);
+            grid.add(new Label("Available:"), 0, 6);
+            grid.add(availabilityBox, 1, 6);
+            
+            editDialog.getDialogPane().setContent(grid);
+            editDialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+            
+            editDialog.setResultConverter(dialogButton -> {
+                if (dialogButton == ButtonType.OK) {
+                    try {
+                        finalPlayer.setName(nameField.getText());
+                        finalPlayer.setAge(Integer.parseInt(ageField.getText()));
+                        finalPlayer.setPosition(positionField.getText());
+                        finalPlayer.setPrice(Double.parseDouble(priceField.getText()));
+                        finalPlayer.setGoal(Integer.parseInt(goalsField.getText()));
+                        finalPlayer.setMatches(Integer.parseInt(matchesField.getText()));
+                        finalPlayer.setIsAvailable(Boolean.parseBoolean(availabilityBox.getValue()));
+                        
+                        Lists.editPlayer(finalPlayer);
+                        outputArea.appendText("Player '" + finalPlayer.getName() + "' updated successfully.\n");
+                        outputArea.appendText("  - Age: " + finalPlayer.getAge() + "\n");
+                        outputArea.appendText("  - Position: " + finalPlayer.getPosition() + "\n");
+                        outputArea.appendText("  - Price: $" + finalPlayer.getPrice() + "\n");
+                        outputArea.appendText("  - Goals: " + finalPlayer.getGoal() + "\n");
+                        outputArea.appendText("  - Matches: " + finalPlayer.getMatches() + "\n");
+                        outputArea.appendText("  - Available: " + (finalPlayer.getIsAvailable() ? "Yes" : "No") + "\n");
+                    } catch (NumberFormatException e) {
+                        outputArea.appendText("Error: Invalid input format. Please check your entries.\n");
+                    } catch (IOException e) {
+                        outputArea.appendText("Error updating player: " + e.getMessage() + "\n");
+                    }
+                }
+                return null;
+            });
+            
+            editDialog.showAndWait();
+        } catch (NumberFormatException e) {
+            outputArea.appendText("Invalid player ID format.\n");
         }
     }
     

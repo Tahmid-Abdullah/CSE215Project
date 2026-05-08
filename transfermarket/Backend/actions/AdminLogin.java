@@ -1,21 +1,25 @@
 package transfermarket.Backend.actions;
 
-import transfermarket.Backend.entities.*;
-import transfermarket.File.*;
-import transfermarket.Util.Tools;
-
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Scanner;
 
-import static transfermarket.Backend.actions.OwnerLogin.editTeam;
+import transfermarket.Backend.entities.Admin;
+import transfermarket.Backend.entities.Manager;
+import transfermarket.Backend.entities.Owner;
+import transfermarket.Backend.entities.Player;
+import transfermarket.Backend.entities.Team;
+import transfermarket.File.FileManager;
+import transfermarket.File.Lists;
+import transfermarket.Util.Tools;
 
 public class AdminLogin {
     static Scanner in = new Scanner(System.in);
-    private static final String playerfile = FileManager.PLAYER_FILE;
-    private static final String teamfile = FileManager.TEAM_FILE;
-    private static final String adminFile = FileManager.ADMIN_FILE;
-    private static final String managerfile = FileManager.MANAGER_FILE;
-    private static final String ownerfile = FileManager.OWNER_FILE;
+    private static final String PLAYER_FILE = FileManager.PLAYER_FILE;
+    private static final String TEAM_FILE = FileManager.TEAM_FILE;
+    private static final String ADMIN_FILE = FileManager.ADMIN_FILE;
+    private static final String MANAGER_FILE = FileManager.MANAGER_FILE;
+    private static final String OWNER_FILE = FileManager.OWNER_FILE;
 
     public AdminLogin(){
 
@@ -23,7 +27,7 @@ public class AdminLogin {
 
     // Check admin ...
     public static boolean checkAdmin(String username, String password) throws IOException {
-        ArrayList<String> lines = FileManager.readFromFile(adminFile);
+        ArrayList<String> lines = FileManager.readFromFile(ADMIN_FILE);
         if (lines.isEmpty()) {
             return false;
         }
@@ -34,7 +38,7 @@ public class AdminLogin {
 
     //Case 2: View Managers
     public static void viewManagers() throws IOException {
-        ArrayList<String> dataLines= FileManager.readFromFile(managerfile);
+        ArrayList<String> dataLines= FileManager.readFromFile(MANAGER_FILE);
         if (dataLines.isEmpty()) {
             System.out.println("No managers data available.");
             return;
@@ -51,7 +55,7 @@ public class AdminLogin {
 
     // Case 3: View Registered teams
     public static void viewTeams() throws IOException {
-        ArrayList<String> dataLines= FileManager.readFromFile(teamfile);
+        ArrayList<String> dataLines= FileManager.readFromFile(TEAM_FILE);
         if (dataLines.isEmpty()) {
             System.out.println("No team data available.");
             return;
@@ -70,7 +74,7 @@ public class AdminLogin {
 
     // Case 4: Viewing the list of available players.
     public static void viewPlayers() throws IOException {
-        ArrayList<String> playerDataLines = FileManager.readFromFile(playerfile);
+        ArrayList<String> playerDataLines = FileManager.readFromFile(PLAYER_FILE);
         if (playerDataLines.isEmpty()) {
             System.out.println("No players available.");
             return;
@@ -129,7 +133,7 @@ public class AdminLogin {
         }
     }
 
-    // case 6: Removing a player from the file, and it's object if unsold:
+    // case 7: Removing a player from the file, and it's object if unsold:
     public static void removePlayer() throws IOException {
         try {
             viewPlayers();
@@ -137,6 +141,95 @@ public class AdminLogin {
             Lists.removePlayer(id);
     } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    // Case 6: Edit Player
+    public static void editPlayer() throws IOException {
+        try {
+            viewPlayers();
+            int id = Tools.readInt(in, "Enter player ID to edit: ");
+            
+            ArrayList<Player> players = Lists.getPlayerList();
+            Player targetPlayer = null;
+            for (Player p : players) {
+                if (p.getId() == id) {
+                    targetPlayer = p;
+                    break;
+                }
+            }
+            
+            if (targetPlayer == null) {
+                System.out.println("Player not found.");
+                return;
+            }
+            
+            System.out.println("\n=== Editing Player: " + targetPlayer.getName() + " ===");
+            System.out.println("Current details:");
+            targetPlayer.displayPlayers();
+            
+            System.out.println("\nEnter new values (press Enter to skip):");
+            
+            String newName = Tools.readString(in, "Enter new name [" + targetPlayer.getName() + "]: ");
+            if (!newName.isEmpty()) {
+                targetPlayer.setName(newName);
+            }
+            
+            String ageInput = Tools.readString(in, "Enter new age [" + targetPlayer.getAge() + "]: ");
+            if (!ageInput.isEmpty()) {
+                try {
+                    targetPlayer.setAge(Integer.parseInt(ageInput));
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid age format, keeping current value.");
+                }
+            }
+            
+            String newPosition = Tools.readString(in, "Enter new position [" + targetPlayer.getPosition() + "]: ");
+            if (!newPosition.isEmpty()) {
+                targetPlayer.setPosition(newPosition);
+            }
+            
+            String priceInput = Tools.readString(in, "Enter new price [" + targetPlayer.getPrice() + "]: ");
+            if (!priceInput.isEmpty()) {
+                try {
+                    targetPlayer.setPrice(Double.parseDouble(priceInput));
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid price format, keeping current value.");
+                }
+            }
+            
+            String goalsInput = Tools.readString(in, "Enter new goals scored [" + targetPlayer.getGoal() + "]: ");
+            if (!goalsInput.isEmpty()) {
+                try {
+                    targetPlayer.setGoal(Integer.parseInt(goalsInput));
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid goals format, keeping current value.");
+                }
+            }
+            
+            String matchesInput = Tools.readString(in, "Enter new matches played [" + targetPlayer.getMatches() + "]: ");
+            if (!matchesInput.isEmpty()) {
+                try {
+                    targetPlayer.setMatches(Integer.parseInt(matchesInput));
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid matches format, keeping current value.");
+                }
+            }
+            
+            String availableInput = Tools.readString(in, "Is player available? (true/false) [" + targetPlayer.getIsAvailable() + "]: ");
+            if (!availableInput.isEmpty()) {
+                try {
+                    targetPlayer.setIsAvailable(Boolean.parseBoolean(availableInput));
+                } catch (Exception e) {
+                    System.out.println("Invalid availability format, keeping current value.");
+                }
+            }
+            
+            Lists.editPlayer(targetPlayer);
+            System.out.println("Player updated successfully.");
+            
+        } catch (IOException e) {
+            System.out.println("Error editing player: " + e.getMessage());
         }
     }
 
@@ -157,7 +250,7 @@ public class AdminLogin {
     public static void removeManager() throws IOException {
         try {
             viewManagers();
-            ArrayList<String> line= FileManager.readFromFile(managerfile);
+            ArrayList<String> line= FileManager.readFromFile(MANAGER_FILE);
             if(line.isEmpty()){
                 return;
             }
@@ -178,7 +271,7 @@ public class AdminLogin {
 
             Team t = new Team(name,null,b,p,null);
             Lists.addTeam(t);
-            FileManager.overWriteObjectFile(teamfile,Lists.getTeamList());
+            FileManager.overWriteObjectFile(TEAM_FILE,Lists.getTeamList());
             System.out.println("Team registered for sale with ID " + t.getId() + ".");
         } catch (IOException e) {
             System.out.println("Error adding team: " + e.getMessage());
@@ -209,7 +302,7 @@ public class AdminLogin {
             
             Owner o = new Owner(name, password, budget);
             Lists.addOwner(o);
-            FileManager.overWriteObjectFile(ownerfile, Lists.getOwnerList());
+            FileManager.overWriteObjectFile(OWNER_FILE, Lists.getOwnerList());
             System.out.println("owner.txt updated");
             System.out.println("Owner added successfully with ID " + o.getId() + ".");
         } catch (IOException e) {
@@ -217,7 +310,7 @@ public class AdminLogin {
         }
     }
 
-    //case 12 (renamed, was 11):
+    //case 12 :
     public static void addOwner() throws IOException {
         try {
             String name = Tools.readString(in, "Enter owner name: ");
@@ -255,11 +348,11 @@ public class AdminLogin {
             selectedManager.setTeamId(t.getId());
             Lists.addTeam(t);
             // Update manager file
-            FileManager.overWriteObjectFile(managerfile,Lists.getManagerList());
+            FileManager.overWriteObjectFile(MANAGER_FILE,Lists.getManagerList());
             System.out.println("manager.txt updated");
             System.out.println("Team added successfully with ID " + t.getId() + ".");
             Lists.addOwner(owner);
-            FileManager.overWriteObjectFile(ownerfile, Lists.getOwnerList());
+            FileManager.overWriteObjectFile(OWNER_FILE, Lists.getOwnerList());
             System.out.println("owner.txt updated");
             System.out.println("Owner added successfully with ID " + owner.getId() + ".");
 
@@ -268,7 +361,7 @@ public class AdminLogin {
         }
     }
 
-    //case 13 (renamed, was 12): remove owner
+    //case 13 : remove owner
     public static void removeOwner() throws IOException {
         try {
             viewOwners();
@@ -309,13 +402,13 @@ public class AdminLogin {
                 // Set team owner to null instead of removing owner
                 ownedTeam.setOwner(null);
                 targetOwner.setTeam(null);
-                FileManager.overWriteObjectFile(teamfile, Lists.getTeamList());
+                FileManager.overWriteObjectFile(TEAM_FILE, Lists.getTeamList());
                 System.out.println("teams.txt updated");
             }
             
             // Remove owner
             owners.remove(targetOwner);
-            FileManager.overWriteObjectFile(ownerfile, Lists.getOwnerList());
+            FileManager.overWriteObjectFile(OWNER_FILE, Lists.getOwnerList());
             System.out.println("owner.txt updated");
             System.out.println("Owner removed successfully.");
         } catch (IOException e) {
@@ -337,16 +430,17 @@ public class AdminLogin {
                     3.View registered teams.
                     4.View player list.
                     5.Add Player.
-                    6.Remove Player.
-                    7.Add Manager.
-                    8.Remove Manager.
-                    9.Add team.
-                    10.Remove team.
-                    11.View Owners.
-                    12.Add Owner (with team).
-                    13.Add Owner (without team).
-                    14.Remove Owner.
-                    15.Log out.
+                    6.Edit Player.
+                    7.Remove Player.
+                    8.Add Manager.
+                    9.Remove Manager.
+                    10.Add team.
+                    11.Remove team.
+                    12.View Owners.
+                    13.Add Owner (with team).
+                    14.Add Owner (without team).
+                    15.Remove Owner.
+                    16.Log out.
                     
                     """);
 
@@ -359,7 +453,7 @@ public class AdminLogin {
                         Admin admin = Admin.getInstance();
                         admin.setName(username);
                         admin.setPassword(password);
-                        FileManager.overwriteFile(adminFile,admin.toString());
+                        FileManager.overwriteFile(ADMIN_FILE,admin.toString());
                         System.out.println("admin.txt updated");
                         System.out.println("Admin credentials updated successfully!");
                     } catch (IOException e) {
@@ -405,6 +499,15 @@ public class AdminLogin {
 
                 case 6:
                     try {
+                        System.out.println("Editing player...");
+                        editPlayer();
+                    } catch (IOException e) {
+                        System.out.println("Error editing player: " + e.getMessage());
+                    }
+                    break;
+
+                case 7:
+                    try {
                         System.out.println("Removing player...");
                         removePlayer();
                     } catch (IOException e) {
@@ -412,7 +515,7 @@ public class AdminLogin {
                     }
                     break;
 
-                case 7:
+                case 8:
                     try {
                         System.out.println("Adding Manager...");
 
@@ -422,7 +525,7 @@ public class AdminLogin {
                     }
                     break;
 
-                case 8:
+                case 9:
                     try {
                         System.out.println("Removing manager...");
                         removeManager();
@@ -431,7 +534,7 @@ public class AdminLogin {
                     }
                     break;
 
-                case 9:
+                case 10:
                     try {
                         System.out.println("Adding team...");
                         addTeam();
@@ -440,7 +543,7 @@ public class AdminLogin {
                     }
                     break;
 
-                case 10:
+                case 11:
                     try {
                         System.out.println("Removing team...");
                         removeTeam();
@@ -449,7 +552,7 @@ public class AdminLogin {
                     }
                     break;
 
-                case 11:
+                case 12:
                     try {
                         System.out.println("Owners and their teams:");
                         viewOwners();
@@ -458,7 +561,7 @@ public class AdminLogin {
                     }
                     break;
 
-                case 12:
+                case 13:
                     try {
                         System.out.println("Adding Owner with team...");
                         addOwner();
@@ -467,7 +570,7 @@ public class AdminLogin {
                     }
                     break;
 
-                case 13:
+                case 14:
                     try {
                         System.out.println("Adding Owner without team...");
                         addOwnerWithoutTeam();
@@ -476,7 +579,7 @@ public class AdminLogin {
                     }
                     break;
 
-                case 14:
+                case 15:
                     try {
                         System.out.println("Removing owner...");
                         removeOwner();
@@ -484,7 +587,7 @@ public class AdminLogin {
                         System.out.println("Error removing owner: " + e.getMessage());
                     }
                     break;
-                case 15:
+                case 16:
                     System.out.println("Logging out...");
                     bool = false;
                     break;

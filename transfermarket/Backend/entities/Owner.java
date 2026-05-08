@@ -1,26 +1,26 @@
 package transfermarket.Backend.entities;
 
-import transfermarket.Util.Tools;
-import transfermarket.File.FileManager;
-
 import java.io.IOException;
+
+import transfermarket.File.FileManager;
+import transfermarket.Util.Tools;
 
 public class Owner extends  Entity{
     private int id;
     private double ownersBudget;
-    private static final String ownerfile = FileManager.OWNER_FILE;
+    //private static final String ownerfile = FileManager.OWNER_FILE;
     private Team team;
 
     public Owner(String name, String password, double budget) throws IOException {
         super(name, password);
-        this.id= Tools.idGenerator(ownerfile);
+        this.id= Tools.idGenerator(FileManager.OWNER_FILE);
         this.ownersBudget = budget;
         this.team=null;
     }
 
     public Owner(String name, String password, double budget,Team t) throws IOException {
         super(name, password);
-        this.id= Tools.idGenerator(ownerfile);
+        this.id= Tools.idGenerator(FileManager.OWNER_FILE);
         this.ownersBudget = budget;
         this.team=t;
     }

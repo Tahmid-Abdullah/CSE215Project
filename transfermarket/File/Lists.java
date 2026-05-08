@@ -1,17 +1,21 @@
 package transfermarket.File;
 
-import transfermarket.Backend.entities.*;
-
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import transfermarket.Backend.entities.Manager;
+import transfermarket.Backend.entities.Owner;
+import transfermarket.Backend.entities.Player;
+import transfermarket.Backend.entities.Team;
 
 public class Lists {
 
-    private static final String playerfile = FileManager.PLAYER_FILE;
-    private static final String teamfile = FileManager.TEAM_FILE;
-    private static final String adminFile = FileManager.ADMIN_FILE;
-    private static final String managerfile = FileManager.MANAGER_FILE;
-    private static final String ownerfile = FileManager.OWNER_FILE;
+    private static final String PLAYER_FILE = FileManager.PLAYER_FILE;
+    private static final String TEAM_FILE = FileManager.TEAM_FILE;
+    private static final String ADMIN_FILE = FileManager.ADMIN_FILE;
+    private static final String MANAGER_FILE = FileManager.MANAGER_FILE;
+    private static final String OWNER_FILE = FileManager.OWNER_FILE;
 
     private static ArrayList<Player> playerList = new ArrayList<>();
     private static ArrayList<Manager> managerList = new ArrayList<>();
@@ -36,25 +40,25 @@ public class Lists {
 
     public static void addPlayer(Player p) throws IOException {
         playerList.add(p);
-        FileManager.writeToFile(playerfile, p.toString());
+        FileManager.writeToFile(PLAYER_FILE, p.toString());
         System.out.println("Player added and written to file successfully.");
     }
 
     public static void addManager(Manager m) throws IOException {
         managerList.add(m);
-        FileManager.writeToFile(managerfile, m.toString());
+        FileManager.writeToFile(MANAGER_FILE, m.toString());
         System.out.println("Manager added and written to file successfully.");
     }
 
     public static void addTeam(Team t) throws IOException {
         teamList.add(t);
-        FileManager.writeToFile(teamfile, t.toString());
+        FileManager.writeToFile(TEAM_FILE, t.toString());
         System.out.println("Team added and written to file successfully.");
     }
 
     public static void addOwner(Owner o) throws IOException {
         ownerList.add(o);
-        FileManager.writeToFile(ownerfile, o.toString());
+        FileManager.writeToFile(OWNER_FILE, o.toString());
         System.out.println("Owner added and written to file successfully.");
     }
 
@@ -72,13 +76,26 @@ public class Lists {
         }
         playerList.remove(target);
         System.out.println("Player Removed successfully.");
-        FileManager.overWriteObjectFile(playerfile, playerList);
+        FileManager.overWriteObjectFile(PLAYER_FILE, playerList);
         System.out.println("File overwritten successfully.");
+    }
+
+    public static void editPlayer(Player updatedPlayer) throws IOException {
+        // Find the player in the list and update it
+        for (int i = 0; i < playerList.size(); i++) {
+            if (playerList.get(i).getId() == updatedPlayer.getId()) {
+                playerList.set(i, updatedPlayer);
+                break;
+            }
+        }
+        // Overwrite the file with updated player list
+        FileManager.overWriteObjectFile(PLAYER_FILE, playerList);
+        System.out.println("players.txt updated");
     }
 
     public static void loadManagers() throws IOException {
         managerList.clear();
-        List<String> lines = FileManager.readFromFile(managerfile);
+        List<String> lines = FileManager.readFromFile(MANAGER_FILE);
         for (String line : lines) {
             String[] parts = line.split(",");
             if (parts.length >= 4) {
@@ -111,7 +128,7 @@ public class Lists {
         }
         if (target.getIsAvailable()) {
             managerList.remove(target);
-            FileManager.overWriteObjectFile(managerfile, managerList);
+            FileManager.overWriteObjectFile(MANAGER_FILE, managerList);
             System.out.println("manager.txt updated");
         } else {
             System.out.println("Manager is already booked.");
@@ -132,7 +149,7 @@ public class Lists {
         }
         if (target.getCurrentSize() == 0 && target.getManager() == null && target.getOwner() == null) {
             teamList.remove(target);
-            FileManager.overWriteObjectFile(teamfile, teamList);
+            FileManager.overWriteObjectFile(TEAM_FILE, teamList);
             System.out.println("teams.txt updated");
         } else {
             System.out.println("Team already has an owner, players, or manager.");
@@ -158,7 +175,7 @@ public class Lists {
             }
         }
         ownerList.remove(target);
-        FileManager.overWriteObjectFile(ownerfile, ownerList);
+        FileManager.overWriteObjectFile(OWNER_FILE, ownerList);
         System.out.println("owner.txt updated");
     }
 
@@ -167,15 +184,15 @@ public class Lists {
         loadManagers();
         loadOwners();
         loadTeams();
-        FileManager.overWriteObjectFile(playerfile, playerList);
-        FileManager.overWriteObjectFile(managerfile, managerList);
-        FileManager.overWriteObjectFile(teamfile, teamList);
-        FileManager.overWriteObjectFile(ownerfile, ownerList);
+        FileManager.overWriteObjectFile(PLAYER_FILE, playerList);
+        FileManager.overWriteObjectFile(MANAGER_FILE, managerList);
+        FileManager.overWriteObjectFile(TEAM_FILE, teamList);
+        FileManager.overWriteObjectFile(OWNER_FILE, ownerList);
     }
 
     public static void loadPlayers() throws IOException {
         playerList.clear();
-        List<String> lines = FileManager.readFromFile(playerfile);
+        List<String> lines = FileManager.readFromFile(PLAYER_FILE);
         for (String line : lines) {
             String[] parts = line.split(",");
             if (parts.length >= 9) {
@@ -201,7 +218,7 @@ public class Lists {
 
     public static void loadTeams() throws IOException {
         teamList.clear();
-        List<String> lines = FileManager.readFromFile(teamfile);
+        List<String> lines = FileManager.readFromFile(TEAM_FILE);
         for (String line : lines) {
             String[] parts = line.split(",");
             if (parts.length >= 6) {
@@ -259,7 +276,7 @@ public class Lists {
 
     public static void loadOwners() throws IOException {
         ownerList.clear();
-        List<String> lines = FileManager.readFromFile(ownerfile);
+        List<String> lines = FileManager.readFromFile(OWNER_FILE);
         for (String line : lines) {
             String[] parts = line.split(",");
             if (parts.length >= 5) {

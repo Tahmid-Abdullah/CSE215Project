@@ -1,12 +1,21 @@
 package transfermarket.UI;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
-import transfermarket.Backend.entities.*;
-import transfermarket.File.*;
-import java.util.*;
 import java.io.IOException;
+import java.util.ArrayList;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextInputDialog;
+import transfermarket.Backend.entities.Manager;
+import transfermarket.Backend.entities.Owner;
+import transfermarket.Backend.entities.Player;
+import transfermarket.Backend.entities.Team;
+import transfermarket.File.FileManager;
+import transfermarket.File.Lists;
 
 public class OwnerController {
     @FXML private Label ownerTitle;

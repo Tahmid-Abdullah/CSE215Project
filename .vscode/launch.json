@@ -3,6 +3,20 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Main",
+      "request": "launch",
+      "mainClass": "transfermarket.Backend.Main",
+      "projectName": "TransferMarket"
+    },
+    {
+      "type": "java",
+      "name": "Launcher",
+      "request": "launch",
+      "mainClass": "Launcher",
+      "projectName": "TransferMarket"
+    },
+    {
+      "type": "java",
       "name": "Run TransferMarket",
       "request": "launch",
       "mainClass": "transfermarket.UI.Launcher",
