@@ -1,7 +1,14 @@
 package transfermarket.Backend.actions;
 
-import transfermarket.Backend.entities.*;
-import transfermarket.File.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+import transfermarket.Backend.entities.Manager;
+import transfermarket.Backend.entities.Player;
+import transfermarket.Backend.entities.Team;
+import transfermarket.File.FileManager;
+import transfermarket.File.Lists;
 import transfermarket.Util.Tools;
 
 import java.io.IOException;
