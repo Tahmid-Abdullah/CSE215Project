@@ -7,7 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
-import  javafx.scene.control.Label;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -29,25 +29,23 @@ public class AdminController {
     
     @FXML
     protected void onUpdateCredentials() {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Update Admin Credentials");
-        dialog.setHeaderText("Enter new username:");
-        dialog.setContentText("Username:");
-        
-        String username = dialog.showAndWait().orElse(null);
-        if (username == null) return;
-        
-        dialog.setContentText("Password:");
-        String password = dialog.showAndWait().orElse(null);
-        if (password == null) return;
-        
         try {
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Update Admin Credentials");
+            dialog.setHeaderText("Enter new username:");
+            dialog.setContentText("Username:");
+            
+            String username = dialog.showAndWait().orElse(null);
+            if (username == null) return;
+            
+            dialog.setContentText("Password:");
+            String password = dialog.showAndWait().orElse(null);
+            if (password == null) return;
+            
             Admin admin = Admin.getInstance();
             admin.setName(username);
             admin.setPassword(password);
-            // Persist admin credentials
-            transfermarket.File.FileManager.overwriteFile(transfermarket.File.FileManager.ADMIN_FILE, admin.toString());
-            System.out.println("admin.txt updated");
+            FileManager.overwriteFile(FileManager.ADMIN_FILE, admin.toString());
             outputArea.appendText("Admin credentials updated successfully!\n");
         } catch (Exception e) {
             outputArea.appendText("Error: " + e.getMessage() + "\n");
@@ -59,16 +57,20 @@ public class AdminController {
         try {
             outputArea.clear();
             ArrayList<Manager> managers = Lists.getManagerList();
-            if (managers.isEmpty()) {
-                outputArea.appendText("No managers available.\n");
-            } else {
-                for (Manager m : managers) {
-                    outputArea.appendText("ID: " + m.getId() + " | Name: " + m.getName() + 
-                                        " | Available: " + (m.getIsAvailable() ? "Yes" : "No") + "\n");
-                }
-            }
+            displayManagers(managers);
         } catch (Exception e) {
             outputArea.appendText("Error: " + e.getMessage() + "\n");
+        }
+    }
+    
+    private void displayManagers(ArrayList<Manager> managers) {
+        if (managers.isEmpty()) {
+            outputArea.appendText("No managers available.\n");
+        } else {
+            for (Manager m : managers) {
+                outputArea.appendText("ID: " + m.getId() + " | Name: " + m.getName() + 
+                                    " | Available: " + (m.getIsAvailable() ? "Yes" : "No") + "\n");
+            }
         }
     }
     
@@ -77,17 +79,21 @@ public class AdminController {
         try {
             outputArea.clear();
             ArrayList<Team> teams = Lists.getTeamList();
-            if (teams.isEmpty()) {
-                outputArea.appendText("No teams available.\n");
-            } else {
-                for (Team t : teams) {
-                    outputArea.appendText("ID: " + t.getId() + " | Name: " + t.getTeamName() + 
-                                        " | Manager: " + (t.getManager() != null ? t.getManager().getName() : "None") +
-                                        " | Size: " + t.getCurrentSize() + " | Budget: $" + t.getBudget() + "\n");
-                }
-            }
+            displayTeams(teams);
         } catch (Exception e) {
             outputArea.appendText("Error: " + e.getMessage() + "\n");
+        }
+    }
+    
+    private void displayTeams(ArrayList<Team> teams) {
+        if (teams.isEmpty()) {
+            outputArea.appendText("No teams available.\n");
+        } else {
+            for (Team t : teams) {
+                outputArea.appendText("ID: " + t.getId() + " | Name: " + t.getTeamName() + 
+                                    " | Manager: " + (t.getManager() != null ? t.getManager().getName() : "None") +
+                                    " | Size: " + t.getCurrentSize() + " | Budget: $" + t.getBudget() + "\n");
+            }
         }
     }
     
@@ -96,18 +102,22 @@ public class AdminController {
         try {
             outputArea.clear();
             ArrayList<Player> players = Lists.getPlayerList();
-            if (players.isEmpty()) {
-                outputArea.appendText("No players available.\n");
-            } else {
-                for (Player p : players) {
-                    outputArea.appendText("ID: " + p.getId() + " | Name: " + p.getName() + 
-                                        " | Position: " + p.getPosition() + " | Age: " + p.getAge() +
-                                        " | Price: $" + p.getPrice() + " | Available: " + 
-                                        (p.getIsAvailable() ? "Yes" : "No") + "\n");
-                }
-            }
+            displayPlayers(players);
         } catch (Exception e) {
             outputArea.appendText("Error: " + e.getMessage() + "\n");
+        }
+    }
+    
+    private void displayPlayers(ArrayList<Player> players) {
+        if (players.isEmpty()) {
+            outputArea.appendText("No players available.\n");
+        } else {
+            for (Player p : players) {
+                outputArea.appendText("ID: " + p.getId() + " | Name: " + p.getName() + 
+                                    " | Position: " + p.getPosition() + " | Age: " + p.getAge() +
+                                    " | Price: $" + p.getPrice() + " | Available: " + 
+                                    (p.getIsAvailable() ? "Yes" : "No") + "\n");
+            }
         }
     }
     
@@ -157,18 +167,24 @@ public class AdminController {
     
     @FXML
     protected void onRemovePlayer() {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Remove Player");
-        dialog.setHeaderText("Enter player ID to remove:");
-        dialog.setContentText("Player ID:");
-        
-        String idStr = dialog.showAndWait().orElse(null);
-        if (idStr == null) return;
-        
         try {
+            outputArea.clear();
+            ArrayList<Player> players = Lists.getPlayerList();
+            displayPlayers(players);
+            
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Remove Player");
+            dialog.setHeaderText("Enter player ID to remove:");
+            dialog.setContentText("Player ID:");
+            
+            String idStr = dialog.showAndWait().orElse(null);
+            if (idStr == null) return;
+            
             int id = Integer.parseInt(idStr);
             Lists.removePlayer(id);
             outputArea.appendText("Player removed successfully.\n");
+        } catch (NumberFormatException e) {
+            outputArea.appendText("Invalid player ID format.\n");
         } catch (IOException e) {
             outputArea.appendText("Error: " + e.getMessage() + "\n");
         }
@@ -333,18 +349,24 @@ public class AdminController {
     
     @FXML
     protected void onRemoveManager() {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Remove Manager");
-        dialog.setHeaderText("Enter manager ID to remove:");
-        dialog.setContentText("Manager ID:");
-        
-        String idStr = dialog.showAndWait().orElse(null);
-        if (idStr == null) return;
-        
         try {
+            outputArea.clear();
+            ArrayList<Manager> managers = Lists.getManagerList();
+            displayManagers(managers);
+            
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Remove Manager");
+            dialog.setHeaderText("Enter manager ID to remove:");
+            dialog.setContentText("Manager ID:");
+            
+            String idStr = dialog.showAndWait().orElse(null);
+            if (idStr == null) return;
+            
             int id = Integer.parseInt(idStr);
             Lists.removeManager(id);
             outputArea.appendText("Manager removed successfully.\n");
+        } catch (NumberFormatException e) {
+            outputArea.appendText("Invalid manager ID format.\n");
         } catch (IOException e) {
             outputArea.appendText("Error: " + e.getMessage() + "\n");
         }
@@ -455,43 +477,22 @@ public class AdminController {
     
     @FXML
     protected void onRemoveTeam() {
-        // First show available teams
         try {
             outputArea.clear();
             ArrayList<Team> teams = Lists.getTeamList();
-            if (teams.isEmpty()) {
-                outputArea.appendText("No teams available to remove.\n");
-                return;
-            }
-            outputArea.appendText("--- Teams ---\n");
-            for (Team t : teams) {
-                outputArea.appendText("ID: " + t.getId() + " | Name: " + t.getTeamName() + 
-                        " | Manager: " + (t.getManager() != null ? t.getManager().getName() : "None") + 
-                        " | Players: " + t.getCurrentSize() + "/11 | Owner: " + 
-                        (t.getOwner() != null ? t.getOwner().getName() : "None") + "\n");
-            }
-        } catch (Exception e) {
-            outputArea.appendText("Error loading teams: " + e.getMessage() + "\n");
-        }
-        
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Remove Team");
-        dialog.setHeaderText("Enter team ID to remove:");
-        dialog.setContentText("Team ID:");
-        
-        String idStr = dialog.showAndWait().orElse(null);
-        if (idStr == null) return;
-        
-        try {
+            displayTeams(teams);
+            
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Remove Team");
+            dialog.setHeaderText("Enter team ID to remove:");
+            dialog.setContentText("Team ID:");
+            
+            String idStr = dialog.showAndWait().orElse(null);
+            if (idStr == null) return;
+            
             int id = Integer.parseInt(idStr);
-            ArrayList<Team> teams = Lists.getTeamList();
-            Team targetTeam = null;
-            for (Team t : teams) {
-                if (t.getId() == id) {
-                    targetTeam = t;
-                    break;
-                }
-            }
+            ArrayList<Team> teamList = Lists.getTeamList();
+            Team targetTeam = findTeamById(teamList, id);
             
             if (targetTeam == null) {
                 outputArea.appendText("Team not available.\n");
@@ -508,16 +509,20 @@ public class AdminController {
                 return;
             }
             
-            // Remove team and update files
-            teams.remove(targetTeam);
-            FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
-            System.out.println("teams.txt updated");
+            Lists.removeTeam(id);
             outputArea.appendText("Team removed successfully.\n");
         } catch (NumberFormatException e) {
             outputArea.appendText("Invalid team ID format.\n");
         } catch (IOException e) {
             outputArea.appendText("Error: " + e.getMessage() + "\n");
         }
+    }
+    
+    private Team findTeamById(ArrayList<Team> teams, int id) {
+        for (Team t : teams) {
+            if (t.getId() == id) return t;
+        }
+        return null;
     }
     
     @FXML
@@ -626,7 +631,6 @@ public class AdminController {
     
     @FXML
     protected void onRemoveOwner() {
-        // First show owners
         try {
             outputArea.clear();
             ArrayList<Owner> owners = Lists.getOwnerList();
@@ -638,35 +642,24 @@ public class AdminController {
             for (Owner o : owners) {
                 outputArea.appendText("ID: " + o.getId() + " | Name: " + o.getName() + " | Budget: $" + o.getBudget() + "\n");
             }
-        } catch (Exception e) {
-            outputArea.appendText("Error: " + e.getMessage() + "\n");
-        }
-        
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Remove Owner");
-        dialog.setHeaderText("Enter owner ID to remove:");
-        dialog.setContentText("Owner ID:");
-        
-        String idStr = dialog.showAndWait().orElse(null);
-        if (idStr == null) return;
-        
-        try {
+            
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Remove Owner");
+            dialog.setHeaderText("Enter owner ID to remove:");
+            dialog.setContentText("Owner ID:");
+            
+            String idStr = dialog.showAndWait().orElse(null);
+            if (idStr == null) return;
+            
             int id = Integer.parseInt(idStr);
-            ArrayList<Owner> owners = Lists.getOwnerList();
-            Owner targetOwner = null;
-            for (Owner o : owners) {
-                if (o.getId() == id) {
-                    targetOwner = o;
-                    break;
-                }
-            }
+            Owner targetOwner = findOwnerById(owners, id);
+            
             if (targetOwner == null) {
                 outputArea.appendText("Owner not found.\n");
                 return;
             }
             
-            // Find teams owned by this owner
-           ArrayList<Team> teams = Lists.getTeamList();
+            ArrayList<Team> teams = Lists.getTeamList();
             Team ownedTeam = null;
             for (Team t : teams) {
                 if (t.getOwner() != null && t.getOwner().getId() == id) {
@@ -675,7 +668,6 @@ public class AdminController {
                 }
             }
             
-            // If owner has a team, check constraints before removal
             if (ownedTeam != null) {
                 if (ownedTeam.getCurrentSize() > 0) {
                     outputArea.appendText("Cannot remove owner. Team still has players (" + ownedTeam.getCurrentSize() + "/11).\n");
@@ -685,21 +677,24 @@ public class AdminController {
                     outputArea.appendText("Cannot remove owner. Team still has a manager assigned.\n");
                     return;
                 }
-                // Set team owner to null instead of removing owner
                 ownedTeam.setOwner(null);
                 FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
-                System.out.println("teams.txt updated");
-                outputArea.appendText("Team owner set to null.\n");
             }
             
-            // Remove owner
-            owners.remove(targetOwner);
-            FileManager.overWriteObjectFile(FileManager.OWNER_FILE, Lists.getOwnerList());
-            System.out.println("owner.txt updated");
+            Lists.removeOwner(id);
             outputArea.appendText("Owner removed successfully.\n");
+        } catch (NumberFormatException e) {
+            outputArea.appendText("Invalid owner ID format.\n");
         } catch (IOException e) {
             outputArea.appendText("Error: " + e.getMessage() + "\n");
         }
+    }
+    
+    private Owner findOwnerById(ArrayList<Owner> owners, int id) {
+        for (Owner o : owners) {
+            if (o.getId() == id) return o;
+        }
+        return null;
     }
     
     @FXML

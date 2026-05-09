@@ -177,7 +177,6 @@ public class ManagerLogin implements  Compare{
         double player1Ratio = 0;
         double player2Ratio = 0;
 
-        // Calculate goal per match ratio, handling division by zero
         if (player1.getMatches() > 0) {
             player1Ratio = (double) player1.getGoal() / player1.getMatches();
         }
