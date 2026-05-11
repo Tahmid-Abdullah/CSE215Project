@@ -36,6 +36,7 @@
             <Button maxWidth="Infinity" text="Remove Owner" onAction="#onRemoveOwner"/>
             <Button maxWidth="Infinity" text="View Players" onAction="#onViewPlayers"/>
             <Button maxWidth="Infinity" text="Add Player" onAction="#onAddPlayer"/>
+            <Button maxWidth="Infinity" text="Edit Player" onAction="#onEditPlayer"/>
             <Button maxWidth="Infinity" text="Remove Player" onAction="#onRemovePlayer"/>
         </VBox>
     </left>
