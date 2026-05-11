@@ -1,11 +1,15 @@
 package transfermarket.Backend.actions;
 
-import transfermarket.Backend.entities.*;
-import transfermarket.File.*;
-import transfermarket.Util.Tools;
-
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+import transfermarket.Backend.entities.Manager;
+import transfermarket.Backend.entities.Player;
+import transfermarket.Backend.entities.Team;
+import transfermarket.File.FileManager;
+import transfermarket.File.Lists;
+import transfermarket.Util.Tools;
 
 public class ManagerLogin implements  Compare{
     private static final String playerfile = FileManager.PLAYER_FILE;
@@ -38,15 +42,7 @@ public class ManagerLogin implements  Compare{
                 }
                 if (t.getCurrentSize()>0) {
                     System.out.println("Team players:");
-//                    for (Player p : t.getPlayers()) {
-//                        System.out.println("ID: " + p.getId()
-//                                + ", Name: " + p.getName()
-//                                + ", Position: " + p.getPosition()
-//                                + ", Age: " + p.getAge()
-//                                + ", Price: $" + p.getPrice()
-//                                + ", Goal scored: " + p.getGoal()
-//                                + ", Matches played: " + p.getMatches());
-//                    }
+
                     t.teamPlayersList();
                     System.out.println("Budget: " + t.getBudget());
                     System.out.println("Size: " + t.getCurrentSize());
@@ -181,7 +177,6 @@ public class ManagerLogin implements  Compare{
         double player1Ratio = 0;
         double player2Ratio = 0;
 
-        // Calculate goal per match ratio, handling division by zero
         if (player1.getMatches() > 0) {
             player1Ratio = (double) player1.getGoal() / player1.getMatches();
         }

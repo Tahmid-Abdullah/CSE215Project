@@ -1,12 +1,21 @@
 package transfermarket.UI;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
-import transfermarket.Backend.entities.*;
-import transfermarket.File.*;
-import java.util.*;
 import java.io.IOException;
+import java.util.ArrayList;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextInputDialog;
+import transfermarket.Backend.entities.Manager;
+import transfermarket.Backend.entities.Owner;
+import transfermarket.Backend.entities.Player;
+import transfermarket.Backend.entities.Team;
+import transfermarket.File.FileManager;
+import transfermarket.File.Lists;
 
 public class OwnerController {
     @FXML private Label ownerTitle;
@@ -23,53 +32,50 @@ public class OwnerController {
     protected void onViewMyTeam() {
         try {
             outputArea.clear();
-            ArrayList<Team> teams = Lists.getTeamList();
-            boolean found = false;
+            Team ownerTeam = getOwnerTeam();
             
-            for (Team t : teams) {
-                if (t.getOwner() != null && t.getOwner().getName().equals(ownerName)) {
-                    found = true;
-                    outputArea.appendText("Team: " + t.getTeamName() + "\n");
-                    outputArea.appendText("Manager: " + (t.getManager() != null ? t.getManager().getName() : "None") + "\n");
-                    outputArea.appendText("Owner: " + t.getOwner().getName() + "\n");
-                    outputArea.appendText("Budget: $" + t.getBudget() + "\n");
-                    outputArea.appendText("Current Size: " + t.getCurrentSize() + "/11\n");
-                    outputArea.appendText("\n--- Team Players ---\n");
-                    
-                    if (t.getCurrentSize() == 0) {
-                        outputArea.appendText("No players in team.\n");
-                    } else {
-                        for (Player p : t.getPlayers()) {
-                            outputArea.appendText("ID: " + p.getId() + " | Name: " + p.getName() + 
-                                                " | Position: " + p.getPosition() + " | Age: " + p.getAge() + "\n");
-                        }
-                    }
-                    break;
-                }
-            }
-            
-            if (!found) {
+            if (ownerTeam == null) {
                 outputArea.appendText("No team found for this owner.\n");
+                return;
             }
+            
+            displayOwnerTeamDetails(ownerTeam);
         } catch (Exception e) {
             outputArea.appendText("Error: " + e.getMessage() + "\n");
+        }
+    }
+    
+    private Team getOwnerTeam() {
+        for (Team t : Lists.getTeamList()) {
+            if (t.getOwner() != null && t.getOwner().getName().equals(ownerName)) {
+                return t;
+            }
+        }
+        return null;
+    }
+    
+    private void displayOwnerTeamDetails(Team t) {
+        outputArea.appendText("Team: " + t.getTeamName() + "\n");
+        outputArea.appendText("Manager: " + (t.getManager() != null ? t.getManager().getName() : "None") + "\n");
+        outputArea.appendText("Owner: " + t.getOwner().getName() + "\n");
+        outputArea.appendText("Budget: $" + t.getBudget() + "\n");
+        outputArea.appendText("Current Size: " + t.getCurrentSize() + "/11\n");
+        outputArea.appendText("\n--- Team Players ---\n");
+        
+        if (t.getCurrentSize() == 0) {
+            outputArea.appendText("No players in team.\n");
+        } else {
+            for (Player p : t.getPlayers()) {
+                outputArea.appendText("ID: " + p.getId() + " | Name: " + p.getName() + 
+                                    " | Position: " + p.getPosition() + " | Age: " + p.getAge() + "\n");
+            }
         }
     }
     
     @FXML
     protected void onEditTeam() {
         try {
-            outputArea.clear();
-            
-            ArrayList<Team> teams = Lists.getTeamList();
-            Team targetTeam = null;
-            
-            for (Team t : teams) {
-                if (t.getOwner() != null && t.getOwner().getName().equals(ownerName)) {
-                    targetTeam = t;
-                    break;
-                }
-            }
+            Team targetTeam = getOwnerTeam();
             
             if (targetTeam == null) {
                 outputArea.appendText("Team not found.\n");
@@ -82,7 +88,7 @@ public class OwnerController {
             outputArea.appendText("Error: " + e.getMessage() + "\n");
         }
     }
-
+    
     @FXML
     protected void onUpdateCredentials() {
         try {
@@ -98,21 +104,14 @@ public class OwnerController {
             String newPass = passDialog.showAndWait().orElse(null);
             if (newPass == null || newPass.isBlank()) return;
 
-            ArrayList<Owner> owners = Lists.getOwnerList();
-            Owner target = null;
-            for (Owner o : owners) {
-                if (o.getName().equals(ownerName)) {
-                    target = o;
-                    break;
-                }
-            }
+            Owner target = findOwnerByName(Lists.getOwnerList(), ownerName);
             if (target == null) {
                 outputArea.appendText("Owner not found.\n");
                 return;
             }
+            
             target.setName(newName);
             target.setPassword(newPass);
-            // Persist owners and teams (owner name appears in teams)
             FileManager.overWriteObjectFile(FileManager.OWNER_FILE, Lists.getOwnerList());
             FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
             this.ownerName = newName;
@@ -121,6 +120,13 @@ public class OwnerController {
         } catch (Exception e) {
             outputArea.appendText("Error updating credentials: " + e.getMessage() + "\n");
         }
+    }
+    
+    private Owner findOwnerByName(ArrayList<Owner> owners, String name) {
+        for (Owner o : owners) {
+            if (o.getName().equals(name)) return o;
+        }
+        return null;
     }
     
     private void showEditMenu(Team team) {
@@ -162,9 +168,7 @@ public class OwnerController {
             m.setIsAvailable(true);
             m.setTeamId(0);
             FileManager.overWriteObjectFile(FileManager.MANAGER_FILE, Lists.getManagerList());
-            System.out.println("manager.txt updated");
             FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
-            System.out.println("teams.txt updated");
             outputArea.appendText("Manager removed successfully.\n");
         } catch (IOException e) {
             outputArea.appendText("Error: " + e.getMessage() + "\n");
@@ -174,15 +178,8 @@ public class OwnerController {
     private void buyPlayer(Team team) {
         try {
             outputArea.clear();
-            outputArea.appendText("--- Available Players ---\n");
-            
             ArrayList<Player> players = Lists.getPlayerList();
-            for (Player p : players) {
-                if (p.getIsAvailable()) {
-                    outputArea.appendText("ID: " + p.getId() + " | Name: " + p.getName() + 
-                                        " | Position: " + p.getPosition() + " | Price: $" + p.getPrice() + "\n");
-                }
-            }
+            displayAvailablePlayers(players, team);
             
             TextInputDialog dialog = new TextInputDialog();
             dialog.setTitle("Buy Player");
@@ -193,50 +190,52 @@ public class OwnerController {
             if (idStr == null) return;
             
             int playerId = Integer.parseInt(idStr);
-            Player selectedPlayer = null;
-            
-            for (Player p : players) {
-                if (p.getId() == playerId && p.getIsAvailable()) {
-                    selectedPlayer = p;
-                    break;
-                }
-            }
-            
-            if (selectedPlayer == null) {
-                outputArea.appendText("Player not found or already sold.\n");
-                return;
-            }
-            
-            if (team.getCurrentSize() >= 11) {
-                outputArea.appendText("Team is full (11/11).\n");
-                return;
-            }
-            
-            if (team.getBudget() < selectedPlayer.getPrice()) {
-                outputArea.appendText("Insufficient budget. Required: $" + selectedPlayer.getPrice() + 
-                                    " | Available: $" + team.getBudget() + "\n");
-                return;
-            }
-            
-            team.getPlayers().add(selectedPlayer);
-            team.setCurrentSize(team.getPlayers().size());
-            team.setBudget(team.getBudget() - selectedPlayer.getPrice());
-            selectedPlayer.setIsAvailable(false);
-            selectedPlayer.setTeamId(team.getId());
-            
-            FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
-            System.out.println("teams.txt updated");
-            FileManager.overWriteObjectFile(FileManager.PLAYER_FILE, Lists.getPlayerList());
-            System.out.println("players.txt updated");
-            
-            outputArea.appendText("Player bought successfully!\n");
-            System.out.println("Player bought: " + selectedPlayer.getName() + " by team: " + team.getTeamName());
-            System.out.println("New team budget: $" + team.getBudget());
-            System.out.println("Player details updated: " + selectedPlayer);
+            String result = performPlayerPurchase(team, playerId);
+            outputArea.appendText(result);
             
         } catch (Exception e) {
             outputArea.appendText("Error: " + e.getMessage() + "\n");
         }
+    }
+    
+    private void displayAvailablePlayers(ArrayList<Player> players, Team team) {
+        outputArea.appendText("--- Available Players ---\n");
+        for (Player p : players) {
+            if (p.getIsAvailable()) {
+                outputArea.appendText("ID: " + p.getId() + " | Name: " + p.getName() + 
+                                    " | Position: " + p.getPosition() + " | Price: $" + p.getPrice() + "\n");
+            }
+        }
+    }
+    
+    private String performPlayerPurchase(Team team, int playerId) throws IOException {
+        Player selectedPlayer = null;
+        for (Player p : Lists.getPlayerList()) {
+            if (p.getId() == playerId && p.getIsAvailable()) {
+                selectedPlayer = p;
+                break;
+            }
+        }
+        
+        if (selectedPlayer == null) return "Player not found or already sold.\n";
+        
+        if (team.getCurrentSize() >= 11) return "Team is full (11/11).\n";
+        
+        if (team.getBudget() < selectedPlayer.getPrice()) {
+            return "Insufficient budget. Required: $" + selectedPlayer.getPrice() + 
+                   " | Available: $" + team.getBudget() + "\n";
+        }
+        
+        team.getPlayers().add(selectedPlayer);
+        team.setCurrentSize(team.getPlayers().size());
+        team.setBudget(team.getBudget() - selectedPlayer.getPrice());
+        selectedPlayer.setIsAvailable(false);
+        selectedPlayer.setTeamId(team.getId());
+        
+        FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
+        FileManager.overWriteObjectFile(FileManager.PLAYER_FILE, Lists.getPlayerList());
+        
+        return "Player bought successfully!\n";
     }
     
     private void sellPlayer(Team team) {
@@ -262,50 +261,42 @@ public class OwnerController {
             if (idStr == null) return;
             
             int playerId = Integer.parseInt(idStr);
-            Player selectedPlayer = null;
-            
-            for (Player p : team.getPlayers()) {
-                if (p.getId() == playerId) {
-                    selectedPlayer = p;
-                    break;
-                }
-            }
-            
-            if (selectedPlayer == null) {
-                outputArea.appendText("Player not found in team.\n");
-                return;
-            }
-            
-            team.getPlayers().remove(selectedPlayer);
-            team.setCurrentSize(team.getPlayers().size());
-            team.setBudget(team.getBudget() + selectedPlayer.getPrice());
-            selectedPlayer.setIsAvailable(true);
-            selectedPlayer.setTeamId(0);
-            
-           FileManager.overWriteObjectFile(FileManager.PLAYER_FILE, Lists.getPlayerList());
-            System.out.println("players.txt updated");
-            FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
-            System.out.println("teams.txt updated");
-            
-            outputArea.appendText("Player sold successfully! Budget: $" + team.getBudget() + "\n");
+            String result = performPlayerSale(team, playerId);
+            outputArea.appendText(result);
             
         } catch (Exception e) {
             outputArea.appendText("Error: " + e.getMessage() + "\n");
         }
     }
     
+    private String performPlayerSale(Team team, int playerId) throws IOException {
+        Player selectedPlayer = null;
+        for (Player p : team.getPlayers()) {
+            if (p.getId() == playerId) {
+                selectedPlayer = p;
+                break;
+            }
+        }
+        
+        if (selectedPlayer == null) return "Player not found in team.\n";
+        
+        team.getPlayers().remove(selectedPlayer);
+        team.setCurrentSize(team.getPlayers().size());
+        team.setBudget(team.getBudget() + selectedPlayer.getPrice());
+        selectedPlayer.setIsAvailable(true);
+        selectedPlayer.setTeamId(0);
+        
+        FileManager.overWriteObjectFile(FileManager.PLAYER_FILE, Lists.getPlayerList());
+        FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
+        
+        return "Player sold successfully! Budget: $" + team.getBudget() + "\n";
+    }
+    
     private void assignManager(Team team) {
         try {
             outputArea.clear();
-            outputArea.appendText("--- Available Managers ---\n");
-            
             ArrayList<Manager> managers = Lists.getManagerList();
-            for (Manager m : managers) {
-                if (m.getIsAvailable()) {
-                    outputArea.appendText("ID: " + m.getId() + " | Name: " + m.getName() + 
-                                        " | Team: " + (m.getTeamId() != 0 ? m.getTeamId() : "Free") + "\n");
-                }
-            }
+            displayAvailableManagers(managers);
             
             TextInputDialog dialog = new TextInputDialog();
             dialog.setTitle("Assign Manager");
@@ -316,45 +307,52 @@ public class OwnerController {
             if (idStr == null) return;
             
             int managerId = Integer.parseInt(idStr);
-            Manager selectedManager = null;
-            
-            for (Manager m : managers) {
-                if (m.getId() == managerId && m.getIsAvailable()) {
-                    selectedManager = m;
-                    break;
-                }
-            }
-            
-             if (selectedManager == null) {
-                 outputArea.appendText("Manager not found or already assigned to a team.\n");
-                 return;
-             }
-             
-             if (team.getManager() != null) {
-                 team.getManager().setIsAvailable(true);
-                 team.getManager().setTeamId(0);
-             }
-             
-             team.setManager(selectedManager);
-             selectedManager.setIsAvailable(false);
-             selectedManager.setTeamId(team.getId());
-            
-            FileManager.overWriteObjectFile(FileManager.MANAGER_FILE, Lists.getManagerList());
-            System.out.println("manager.txt updated");
-            FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
-            System.out.println("teams.txt updated");
-            
-            outputArea.appendText("Manager assigned successfully!\n");
+            String result = performManagerAssignment(team, managerId);
+            outputArea.appendText(result);
             
          } catch (Exception e) {
              outputArea.appendText("Error: " + e.getMessage() + "\n");
          }
      }
      
+     private void displayAvailableManagers(ArrayList<Manager> managers) {
+         outputArea.appendText("--- Available Managers ---\n");
+         for (Manager m : managers) {
+             if (m.getIsAvailable()) {
+                 outputArea.appendText("ID: " + m.getId() + " | Name: " + m.getName() + "\n");
+             }
+         }
+     }
+     
+     private String performManagerAssignment(Team team, int managerId) throws IOException {
+         Manager selectedManager = null;
+         for (Manager m : Lists.getManagerList()) {
+             if (m.getId() == managerId && m.getIsAvailable()) {
+                 selectedManager = m;
+                 break;
+             }
+         }
+         
+         if (selectedManager == null) return "Manager not found or already assigned to a team.\n";
+         
+         if (team.getManager() != null) {
+             team.getManager().setIsAvailable(true);
+             team.getManager().setTeamId(0);
+         }
+         
+         team.setManager(selectedManager);
+         selectedManager.setIsAvailable(false);
+         selectedManager.setTeamId(team.getId());
+        
+         FileManager.overWriteObjectFile(FileManager.MANAGER_FILE, Lists.getManagerList());
+         FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
+         
+         return "Manager assigned successfully!\n";
+     }
+     
      @FXML
      protected void onBuyTeam() {
          try {
-             // First, get the owner
              ArrayList<Owner> owners = Lists.getOwnerList();
              Owner currentOwner = null;
              for (Owner o : owners) {
@@ -430,9 +428,7 @@ public class OwnerController {
              
              // Update lists and files
              FileManager.overWriteObjectFile(FileManager.OWNER_FILE, Lists.getOwnerList());
-             System.out.println("owner.txt updated");
              FileManager.overWriteObjectFile(FileManager.TEAM_FILE, Lists.getTeamList());
-             System.out.println("teams.txt updated");
              
              outputArea.appendText("Team purchased successfully! Your new budget: $" + currentOwner.getBudget() + "\n");
              outputArea.appendText("You can now assign a manager and edit your team.\n");

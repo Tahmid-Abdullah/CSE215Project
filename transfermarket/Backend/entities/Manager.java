@@ -1,19 +1,19 @@
 package transfermarket.Backend.entities;
 
-import transfermarket.Util.Tools;
-import transfermarket.File.FileManager;
-
 import java.io.IOException;
+
+import transfermarket.File.FileManager;
+import transfermarket.Util.Tools;
 
 public class Manager extends Entity{
     private int id;
     private boolean isAvailable;
     private int teamId;
-    private static final String managerfile = FileManager.MANAGER_FILE;
+    //private static final String managerfile = FileManager.MANAGER_FILE;
 
     public Manager( String name, String password) throws IOException {
         super(name, password);
-        this.id= Tools.idGenerator(managerfile);
+        this.id= Tools.idGenerator(FileManager.MANAGER_FILE);
         this.isAvailable = true;
         this.teamId = 0;
     }
