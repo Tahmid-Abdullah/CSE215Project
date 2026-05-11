@@ -82,6 +82,11 @@ public class Lists {
     }
 
     public static void editPlayer(Player updatedPlayer) throws IOException {
+        if (updatedPlayer.getIsAvailable()) {
+            removePlayerFromTeams(updatedPlayer);
+            updatedPlayer.setTeamId(0);
+        }
+
         // Find the player in the list and update it
         for (int i = 0; i < playerList.size(); i++) {
             if (playerList.get(i).getId() == updatedPlayer.getId()) {
@@ -89,9 +94,21 @@ public class Lists {
                 break;
             }
         }
+
         // Overwrite the file with updated player list
         FileManager.overWriteObjectFile(PLAYER_FILE, playerList);
         System.out.println("players.txt updated");
+        FileManager.overWriteObjectFile(TEAM_FILE, teamList);
+        System.out.println("teams.txt updated");
+    }
+
+    private static void removePlayerFromTeams(Player player) {
+        for (Team team : teamList) {
+            boolean removed = team.getPlayers().removeIf(p -> p.getId() == player.getId());
+            if (removed || team.getId() == player.getTeamId()) {
+                team.setCurrentSize(team.getPlayers().size());
+            }
+        }
     }
 
     public static void loadManagers() throws IOException {

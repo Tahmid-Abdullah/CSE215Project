@@ -238,6 +238,7 @@ public class AdminController {
             
             // Make a final reference for lambda usage
             final Player finalPlayer = targetPlayer;
+            final int originalTeamId = finalPlayer.getTeamId();
             
             // Show edit dialog
             Dialog<Void> editDialog = new Dialog<>();
@@ -289,6 +290,9 @@ public class AdminController {
                         
                         Lists.editPlayer(finalPlayer);
                         outputArea.appendText("Player '" + finalPlayer.getName() + "' updated successfully.\n");
+                        if (finalPlayer.getIsAvailable() && originalTeamId != 0) {
+                            outputArea.appendText("  - Removed from team ID " + originalTeamId + " and moved to available players.\n");
+                        }
                         outputArea.appendText("  - Age: " + finalPlayer.getAge() + "\n");
                         outputArea.appendText("  - Position: " + finalPlayer.getPosition() + "\n");
                         outputArea.appendText("  - Price: $" + finalPlayer.getPrice() + "\n");
